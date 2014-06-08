@@ -1,0 +1,39 @@
+<div>
+
+  <div ng-switch on="state">
+    <div ng-switch-when="loading-lines">
+      <p>loading all the lines</p>
+    </div>
+    <div ng-switch-when="lines">
+      <div ng-repeat="line in lines" class="line line-{{line.Key}}" ng-click="loadStations(line)">
+        {{line.Name}}
+      </div>
+    </div>
+    <div ng-switch-when="loading-stations">
+      <p>loading all the stations</p>
+    </div>
+    <div ng-switch-when="stations">
+      <p><a href="#" ng-click="loadLines()">Back</a></p>
+      <div class="line line-{{currentLine.Key}}"><h2>{{currentLine.Name}}</h2></div>
+      <ul class="stations-list">
+        <li ng-repeat="station in stations">
+          <a href="#" ng-click="loadStation(station)">{{station.Name}}</a>
+        </li>
+      </ul>
+    </div>
+    <div ng-switch-when="loading-station">
+      <p>loading individual station</p>
+    </div>
+    <div ng-switch-when="station">
+      <p><a href="#" ng-click="loadStations(currentLine)">Back</a></p>
+      <station station="station"></station>
+    </div>
+    <div ng-switch-when="error">
+      <p>there was an error</p>
+    </div>
+    <div ng-switch-default>
+      <p>Tracks???</p>
+    </div>
+  </div>
+
+</div>

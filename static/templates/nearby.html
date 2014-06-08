@@ -1,0 +1,29 @@
+<div>
+
+  <div ng-switch on="state">
+    <div ng-switch-when="loading-geo">
+      <p>loading geo</p>
+    </div>
+    <div ng-switch-when="loading-data">
+      <p>loading data</p>
+    </div>
+    <div ng-switch-when="has-stations">
+      <div ng-repeat="station in stations">
+        <station station="station"></station>
+      </div>
+    </div>
+    <div ng-switch-when="empty-stations">
+      <p>there are no stations near you</p>
+    </div>
+    <div ng-switch-when="error">
+      <p>there was an error</p>
+    </div>
+    <div ng-switch-when="no-geo">
+      <p>no location access</p>
+    </div>
+    <div ng-switch-default>
+      <p>???</p>
+    </div>
+  </div>
+
+</div>

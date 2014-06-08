@@ -1,0 +1,121 @@
+body {
+  padding-top: 50px;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.main-page {
+  padding-bottom: 70px;
+}
+
+.number {
+  font-family: 'Oxygen', sans-serif;
+}
+
+.navbar.navbar-translucent {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.row.no-margin {
+  margin: 0;
+}
+
+.distance {
+  margin-top: 30px;
+}
+
+ul.stations-list li {
+  font-size: 20pt;
+}
+
+.line {
+  padding: 20px;
+  margin: 5px;
+  color: white;
+  font-weight: bold;
+}
+
+.station {
+  padding: 10px;
+  color: white;
+}
+
+.arrival {
+  padding: 8px;
+  text-align: center;
+}
+
+.arrival hr {
+  margin: 0;
+}
+
+.arrival hr.line-Red {
+  border-top: 1px solid #c60c30;
+}
+
+.arrival hr.line-Blue {
+  border-top: 1px solid #00a1de;
+}
+
+.arrival hr.line-Brn {
+  border-top: 1px solid #62361b;
+}
+
+.arrival hr.line-G {
+  border-top: 1px solid #009b3a;
+}
+
+.arrival hr.line-Org {
+  border-top: 1px solid #f9461c;
+}
+
+.arrival hr.line-P {
+  border-top: 1px solid #522398;
+}
+
+.arrival hr.line-Pexp {
+  border-top: 1px solid #522398;
+}
+
+.arrival hr.line-Pink {
+  border-top: 1px solid #e27ea6;
+}
+
+.arrival hr.line-Y {
+  border-top: 1px solid #f9e300;
+}
+
+.line-Red {
+  background-color: #c60c30;
+}
+
+.line-Blue {
+  background-color: #00a1de;
+}
+
+.line-Brn {
+  background-color: #62361b;
+}
+
+.line-G {
+  background-color: #009b3a;
+}
+
+.line-Org {
+  background-color: #f9461c;
+}
+
+.line-P {
+  background-color: #522398;
+}
+
+.line-Pexp {
+  background-color: #522398;
+}
+
+.line-Pink {
+  background-color: #e27ea6;
+}
+
+.line-Y {
+  background-color: #f9e300;
+}

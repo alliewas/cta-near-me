@@ -1,0 +1,24 @@
+<div>
+  <div class="pull-left"><h2>{{station.Name}}</h2></div>
+  <div class="pull-right distance" ng-show="{{station.Distance >= 0}}">
+    <span class="number distance">{{station.Distance | number: 2}}</span> km
+  </div>
+  <div class="clearfix"></div>
+  <div ng-repeat="stop in station.StopArrivals">
+    <div class="station line-{{station.LineKey}}">
+      {{stop.Name}}
+    </div>
+    <div class="row no-margin">
+      <div ng-repeat="arrival in stop.Arrivals.slice(0, 3)" class="col-xs-4 arrival">
+        <span ng-hide="arrival.IsApproaching">
+          <span class="number">{{arrival.ArrivingInSeconds / 60 | number: 0}}</span> m
+        </span>
+        <span ng-show="arrival.IsApproaching">
+          Approaching
+        </span>
+        <hr class="line-{{station.LineKey}}" />
+        <span>{{arrival.ArrivingAt | date: "shortTime"}}</span>
+      </div>
+    </div>
+  </div>
+</div>

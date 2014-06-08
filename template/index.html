@@ -1,0 +1,51 @@
+<!doctype html>
+<html ng-app="cta">
+<head>
+  <meta charset="utf-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
+  <title>ctanear.me</title>
+
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css">
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="/css/app.css" />
+  <script type="text/javascript" src="/js/app.js"></script>
+</head>
+<body>
+
+
+<div class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderCtrl">
+  <div class="container">
+    <div class="navbar-header pull-left">
+      <a class="navbar-brand" href="/">ctanear.me</a>
+    </div>
+    <ul class="nav nav-pills pull-right">
+      <li ng-class="{active: Tabs.nearby()}"><a href="#" ng-click="Tabs.set('nearby')">Nearby</a></li>
+      <li ng-class="{active: Tabs.tracks()}"><a href="#" ng-click="Tabs.set('tracks')">Tracks</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="container main-page" ng-controller="TabsCtrl">
+  <nearby ng-show="Tabs.nearby()"></nearby>
+  <tracks ng-show="Tabs.tracks()"></tracks>
+</div>
+
+<div class="navbar navbar-default navbar-fixed-bottom navbar-translucent" ng-controller="FooterCtrl">
+  <div class="container text-center">
+    <button class="btn btn-default" ng-click="reload()">Reload</button>
+  </div>
+</div>
+
+</body>
+</html>
