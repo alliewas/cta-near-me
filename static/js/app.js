@@ -19,7 +19,7 @@ CTA.factory("Bus", ["$rootScope", function($rootScope) {
 
 // Tabs
 
-CTA.service("Tabs", ["$rootScope", function($rootScope) {
+CTA.service("Tabs", ["$rootScope", "$location", "$anchorScroll", function($rootScope, $location, $anchorScroll) {
   var service = {
     current: "nearby",
 
@@ -34,6 +34,8 @@ CTA.service("Tabs", ["$rootScope", function($rootScope) {
     set: function(tab) {
       service.current = tab;
       $rootScope.$broadcast("Tabs." + tab);
+      $location.hash("top");
+      $anchorScroll();
     }
   };
   return service;
