@@ -25,28 +25,14 @@
 
 <div id="top"></div>
 
-<div class="navbar navbar-default navbar-fixed-top" ng-controller="HeaderCtrl">
-  <div class="container">
-    <div class="navbar-header pull-left">
-      <a class="navbar-brand" href="#" ng-click="refreshPage()">ctanear.me</a>
-    </div>
-    <ul class="nav nav-pills pull-right">
-      <li ng-class="{active: Tabs.nearby()}"><a href="#" ng-click="Tabs.set('nearby')">Nearby</a></li>
-      <li ng-class="{active: Tabs.tracks()}"><a href="#" ng-click="Tabs.set('tracks')">Tracks</a></li>
-    </ul>
-  </div>
-</div>
+<header></header>
 
 <div class="container main-page" ng-controller="TabsCtrl">
   <nearby ng-show="Tabs.nearby()"></nearby>
   <tracks ng-show="Tabs.tracks()"></tracks>
 </div>
 
-<div class="navbar navbar-default navbar-fixed-bottom navbar-translucent" ng-controller="FooterCtrl">
-  <div class="container text-center">
-    <button class="btn btn-default" ng-click="reload()">Reload</button>
-  </div>
-</div>
+<footer></footer>
 
 </body>
 </html>

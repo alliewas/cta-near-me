@@ -46,6 +46,16 @@ CTA.service("Station", ["$rootScope", function($rootScope) {
   return service;
 }]);
 
+// Loading
+
+CTA.service("Loading", ["$rootScope", function($rootScope) {
+  var service = {
+    loading: false,
+    loadable: false
+  };
+  return service;
+}]);
+
 // Tabs
 
 CTA.service("Tabs", ["$rootScope", "$location", "$anchorScroll", "Line", function($rootScope, $location, $anchorScroll, Line) {
@@ -93,17 +103,39 @@ CTA.controller("HeaderCtrl", ["$scope", "Bus", "Tabs", function($scope, Bus, Tab
   }
 }]);
 
+CTA.directive("header", function() {
+  return {
+    restrict: "E",
+    transclude: true,
+    scope: {},
+    controller: "HeaderCtrl",
+    templateUrl: "/templates/header.html"
+  };
+});
+
 // Footer
 
-CTA.controller("FooterCtrl", ["$scope", "Bus", function($scope, Bus) {
+CTA.controller("FooterCtrl", ["$scope", "Bus", "Loading", function($scope, Bus, Loading) {
+  $scope.Loading = Loading;
+
   $scope.reload = function() {
     Bus.broadcast("reload");
   }
 }]);
 
+CTA.directive("footer", function() {
+  return {
+    restrict: "E",
+    transclude: true,
+    scope: {},
+    controller: "FooterCtrl",
+    templateUrl: "/templates/footer.html"
+  };
+});
+
 // Nearby
 
-CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", "Station", function($scope, $http, Bus, Tabs, Station) {
+CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", "Station", "Loading", function($scope, $http, Bus, Tabs, Station, Loading) {
   console.log("NearbyCtrl");
 
   $scope.state = null; // loading-geo, no-geo, geo-error, loading-data, has-stations, empty-stations, error
@@ -171,6 +203,11 @@ CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", "Station", funct
     $scope.getLocation();
   });
 
+  $scope.$watch("state", function() {
+    Loading.loadable = true;
+    Loading.loading = (["loading-geo", "loading-data"].indexOf($scope.state) != -1);
+  });
+
   if (Tabs.nearby()) {
     $scope.getLocation();
   }
@@ -188,7 +225,7 @@ CTA.directive("nearby", function() {
 
 // Tracks
 
-CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station", function($scope, $http, Bus, Tabs, Line, Station) {
+CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station", "Loading", function($scope, $http, Bus, Tabs, Line, Station, Loading) {
   console.log("TracksCtrl");
 
   $scope.Line = Line;
@@ -265,6 +302,11 @@ CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station
 
   $scope.$on("Tabs.tracks", function() {
     $scope.loadLines();
+  });
+
+  $scope.$watch("state", function() {
+    Loading.loadable = (["station", "loading-station", "error"].indexOf($scope.state) != -1);
+    Loading.loading = (["loading-lines", "loading-stations", "loading-station"].indexOf($scope.state) != -1);
   });
 
   if (Tabs.tracks()) {
