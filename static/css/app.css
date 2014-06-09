@@ -138,6 +138,11 @@ ul.stations-list li {
   outline: none;
 }
 
+#footer .btn h2 {
+  margin: 0;
+  padding: 0;
+}
+
 .spin {
      -webkit-transform-origin: 50% 47%;
      transform-origin:50% 47%;
