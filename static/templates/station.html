@@ -11,7 +11,7 @@
     <div class="row no-margin">
       <div ng-repeat="arrival in stop.Arrivals.slice(0, 3)" class="col-xs-4 arrival">
         <span ng-hide="arrival.IsApproaching">
-          <span class="number">{{arrival.ArrivingInSeconds / 60 | number: 0}}</span> m
+          <span class="number">{{arrival.ArrivingInSeconds / 60 | number: 0}}</span> min<span ng-show="Math.round(arrival.ArrivingInSeconds / 60) != 1">s</span>
         </span>
         <span ng-show="arrival.IsApproaching">
           Approaching
