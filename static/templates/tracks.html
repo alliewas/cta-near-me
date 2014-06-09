@@ -2,7 +2,7 @@
 
   <div ng-switch on="state">
     <div ng-switch-when="loading-lines">
-      <p>loading all the lines</p>
+      <spinner message="Loading Lines"></spinner>
     </div>
     <div ng-switch-when="lines">
       <div ng-repeat="line in lines" class="line line-{{line.Key}}" ng-click="Line.set(line)">
@@ -10,7 +10,7 @@
       </div>
     </div>
     <div ng-switch-when="loading-stations">
-      <p>loading all the stations</p>
+      <spinner message="Loading Stations"></spinner>
     </div>
     <div ng-switch-when="stations">
       <p><a href="#" ng-click="loadLines()" class="back-button">Back</a></p>
@@ -23,6 +23,7 @@
     </div>
     <div ng-switch-when="loading-station">
       <p>loading individual station</p>
+      <spinner message="Loading {{Station.current.Name}}"></spinner>
     </div>
     <div ng-switch-when="station">
       <p ng-show="Line.current"><a href="#" ng-click="Line.set(Line.current)" class="back-button">Back</a></p>

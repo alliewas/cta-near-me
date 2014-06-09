@@ -2,10 +2,10 @@
 
   <div ng-switch on="state">
     <div ng-switch-when="loading-geo">
-      <p>loading geo</p>
+      <spinner message="Getting Location"></spinner>
     </div>
     <div ng-switch-when="loading-data">
-      <p>loading data</p>
+      <spinner message="Loading Stations"></spinner>
     </div>
     <div ng-switch-when="has-stations">
       <div ng-repeat="station in stations">

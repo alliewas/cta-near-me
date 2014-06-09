@@ -143,10 +143,20 @@ ul.stations-list li {
   padding: 0;
 }
 
+.spinner {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.spinner .spin {
+  font-size: 84pt;
+  color: #bbbbbb;
+}
+
 .spin {
-     -webkit-transform-origin: 50% 47%;
-     transform-origin:50% 47%;
-     -ms-transform-origin:50% 47%; /* IE 9 */
+     -webkit-transform-origin: 50% 49%;
+     transform-origin:50% 49%;
+     -ms-transform-origin:50% 49%; /* IE 9 */
      -webkit-animation: spin 0.6s infinite linear;
      -moz-animation: spin 0.6s infinite linear;
      -o-animation: spin 0.6s infinite linear;

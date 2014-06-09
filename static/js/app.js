@@ -330,3 +330,13 @@ CTA.directive("station", function() {
     templateUrl: "/templates/station.html"
   };
 });
+
+CTA.directive("spinner", function() {
+  return {
+    restrict: "E",
+    scope: {
+      message: "@"
+    },
+    templateUrl: "/templates/spinner.html"
+  };
+});
