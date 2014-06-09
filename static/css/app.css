@@ -27,8 +27,8 @@ body {
   font-size: 16pt;
 }
 
-ul.stations-list li {
-  font-size: 20pt;
+.stations-list {
+  font-size: 16pt;
 }
 
 .line {

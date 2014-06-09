@@ -29,8 +29,10 @@ func Lines(w http.ResponseWriter, r *http.Request) {
 
 func Stations(w http.ResponseWriter, r *http.Request) {
     lineKey := r.URL.Query().Get("line")
+	lat, _ := strconv.ParseFloat(r.URL.Query().Get("latitude"), 64)
+	long, _ := strconv.ParseFloat(r.URL.Query().Get("longitude"), 64)
 
-    stations := station.StationsForLine(lineKey)
+    stations := station.StationsForLine(lineKey, lat, long)
 
     response, _ := json.Marshal(stations)
     w.Write(response)
@@ -39,7 +41,9 @@ func Stations(w http.ResponseWriter, r *http.Request) {
 func Station(w http.ResponseWriter, r *http.Request) {
     log.Printf("loading station")
     stationId, _ := strconv.ParseInt(r.URL.Query().Get("stationId"), 10, 64)
-    station := station.GetStation(int(stationId))
+	lat, _ := strconv.ParseFloat(r.URL.Query().Get("latitude"), 64)
+	long, _ := strconv.ParseFloat(r.URL.Query().Get("longitude"), 64)
+    station := station.GetStation(int(stationId), lat, long)
     loadStationArrivals(station)
     response, _ := json.Marshal(station)
     w.Write(response)

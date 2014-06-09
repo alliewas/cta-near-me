@@ -17,6 +17,42 @@ CTA.factory("Bus", ["$rootScope", function($rootScope) {
   };
 }]);
 
+// Location
+
+CTA.service("Location", ["$rootScope", function($rootScope) {
+  var service = {
+    latitude: null,
+    longitude: null,
+    successFunction: null,
+    errorFunction: null,
+
+    available: function() {
+      return navigator.geolocation;
+    },
+
+    get: function(successFunction, errorFunction) {
+      service.successFunction = successFunction;
+      service.errorFunction = errorFunction;
+      navigator.geolocation.getCurrentPosition(service.success, service.error);
+    },
+
+    success: function(position) {
+      service.latitude = position.coords.latitude;
+      service.longitude = position.coords.longitude;
+      if (service.successFunction) {
+        service.successFunction(position);
+      }
+    },
+
+    error: function(msg) {
+      if (service.errorFunction) {
+        service.errorFunction(msg);
+      }
+    }
+  };
+  return service;
+}]);
+
 // Line
 
 CTA.service("Line", ["$rootScope", function($rootScope) {
@@ -135,17 +171,15 @@ CTA.directive("footer", function() {
 
 // Nearby
 
-CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", "Station", "Loading", function($scope, $http, Bus, Tabs, Station, Loading) {
+CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", "Station", "Loading", "Location", function($scope, $http, Bus, Tabs, Station, Loading, Location) {
   console.log("NearbyCtrl");
 
   $scope.state = null; // loading-geo, no-geo, geo-error, loading-data, has-stations, empty-stations, error
-  $scope.latitude = null;
-  $scope.longitude = null;
 
   $scope.getLocation = function() {
-    if (navigator.geolocation) {
+    if (Location.available()) {
       $scope.state = "loading-geo";
-      navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
+      Location.get(geoSuccess, geoError);
     } else {
       $scope.state = "no-geo";
     }
@@ -154,8 +188,6 @@ CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", "Station", "Load
   var geoSuccess = function(position) {
     console.log("got coords");
     console.log(position.coords);
-    $scope.latitude = position.coords.latitude;
-    $scope.longitude = position.coords.longitude;
 
     $scope.load();
   }
@@ -165,13 +197,13 @@ CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", "Station", "Load
   }
 
   $scope.load = function() {
-    if ($scope.latitude && $scope.longitude) {
+    if (Location.latitude && Location.longitude) {
       console.log("loading!!!");
       $scope.state = "loading-data";
       $http({
         method: "GET", url: "/api/nearby", params: {
-          latitude: $scope.latitude,
-          longitude: $scope.longitude
+          latitude: Location.latitude,
+          longitude: Location.longitude
         }
       }).success(function(response) {
         console.log(response);
@@ -225,7 +257,7 @@ CTA.directive("nearby", function() {
 
 // Tracks
 
-CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station", "Loading", function($scope, $http, Bus, Tabs, Line, Station, Loading) {
+CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station", "Loading", "Location", function($scope, $http, Bus, Tabs, Line, Station, Loading, Location) {
   console.log("TracksCtrl");
 
   $scope.Line = Line;
@@ -253,7 +285,9 @@ CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station
       $scope.state = "loading-stations";
       $http({
         method: "GET", url: "/api/stations", params: {
-          line: line.Key
+          line: line.Key,
+          latitude: Location.latitude,
+          longitude: Location.longitude
         }
       }).success(function(response) {
         console.log(response);
@@ -270,7 +304,9 @@ CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station
       $scope.state = "loading-station";
       $http({
         method: "GET", url: "/api/station", params: {
-          stationId: station.StationId
+          stationId: station.StationId,
+          latitude: Location.latitude,
+          longitude: Location.longitude
         }
       }).success(function(response) {
         console.log(response);
@@ -339,4 +375,10 @@ CTA.directive("spinner", function() {
     },
     templateUrl: "/templates/spinner.html"
   };
+});
+
+CTA.filter("kmToMiles", function() {
+  return function(km) {
+    return km * 0.621371;
+  }
 });

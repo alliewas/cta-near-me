@@ -24,6 +24,16 @@ func (s Station) Point() *geo.Point {
     return geo.NewPoint(s.Latitude, s.Longitude)
 }
 
+func (s Station) KilometersFrom(latitude, longitude float64) (kilometers float64) {
+    if latitude != 0 && longitude != 0 {
+        point := geo.NewPoint(latitude, longitude)
+        kilometers = point.GreatCircleDistance(s.Point())
+    } else {
+        kilometers = -1
+    }
+    return
+}
+
 type StationWrapper struct {
     Station
     Kilometers float64
@@ -80,13 +90,20 @@ var Lines []Line
 var stations map[int]Station
 var lineStations map[string][]Station
 
-func GetStation(stationId int) StationWrapper {
+func GetStation(stationId int, latitude, longitude float64) StationWrapper {
     station := stations[stationId]
-    return newStationWrapper(station, -1)
+    kilometers := station.KilometersFrom(latitude, longitude)
+    return newStationWrapper(station, kilometers)
 }
 
-func StationsForLine(lineKey string) []Station {
-    return lineStations[lineKey]
+func StationsForLine(lineKey string, latitude, longitude float64) []StationWrapper {
+    basicStations := lineStations[lineKey]
+    wrappedStations := make([]StationWrapper, len(basicStations))
+    for i, station := range basicStations {
+        kilometers := station.KilometersFrom(latitude, longitude)
+        wrappedStations[i] = newStationWrapper(station, kilometers)
+    }
+    return wrappedStations
 }
 
 func StationsNear(latitude, longitude float64) []StationWrapper {

@@ -15,14 +15,18 @@
     <div ng-switch-when="stations">
       <p><a href="#" ng-click="loadLines()" class="back-button">Back</a></p>
       <div class="line line-{{Line.current.Key}}"><h2>{{Line.current.Name}}</h2></div>
-      <ul class="stations-list">
-        <li ng-repeat="station in stations">
-          <a href="#" ng-click="Station.set(station)">{{station.Name}}</a>
-        </li>
-      </ul>
+      <table class="table stations-list">
+        <tr ng-repeat="station in stations" ng-click="Station.set(station)">
+          <td>
+            {{station.Name}}
+          </td>
+          <td class="text-right">
+            {{station.Kilometers | kmToMiles | number: 2}} mi
+          </td>
+        </tr>
+      </table>
     </div>
     <div ng-switch-when="loading-station">
-      <p>loading individual station</p>
       <spinner message="Loading {{Station.current.Name}}"></spinner>
     </div>
     <div ng-switch-when="station">
