@@ -34,6 +34,10 @@ func (s Station) KilometersFrom(latitude, longitude float64) (kilometers float64
     return
 }
 
+func (s Station) Wrap(kilometers float64) StationWrapper {
+    return newStationWrapper(s, kilometers);
+}
+
 type StationWrapper struct {
     Station
     Kilometers float64
@@ -93,7 +97,7 @@ var lineStations map[string][]Station
 func GetStation(stationId int, latitude, longitude float64) StationWrapper {
     station := stations[stationId]
     kilometers := station.KilometersFrom(latitude, longitude)
-    return newStationWrapper(station, kilometers)
+    return station.Wrap(kilometers)
 }
 
 func StationsForLine(lineKey string, latitude, longitude float64) []StationWrapper {
@@ -101,7 +105,7 @@ func StationsForLine(lineKey string, latitude, longitude float64) []StationWrapp
     wrappedStations := make([]StationWrapper, len(basicStations))
     for i, station := range basicStations {
         kilometers := station.KilometersFrom(latitude, longitude)
-        wrappedStations[i] = newStationWrapper(station, kilometers)
+        wrappedStations[i] = station.Wrap(kilometers)
     }
     return wrappedStations
 }
@@ -134,7 +138,7 @@ func calculateStationsNear(point *geo.Point, threshold float64) []StationWrapper
     for _, station := range stations {
         kilometers := point.GreatCircleDistance(station.Point())
         if kilometers <= threshold {
-            wrapper := newStationWrapper(station, kilometers)
+            wrapper := station.Wrap(kilometers)
             near = append(near, wrapper)
         }
     }
