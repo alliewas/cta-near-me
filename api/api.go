@@ -38,9 +38,8 @@ func Stations(w http.ResponseWriter, r *http.Request) {
 
 func Station(w http.ResponseWriter, r *http.Request) {
     log.Printf("loading station")
-    lineKey := r.URL.Query().Get("line")
     stationId, _ := strconv.ParseInt(r.URL.Query().Get("stationId"), 10, 64)
-    station := station.GetStation(lineKey, int(stationId))
+    station := station.GetStation(int(stationId))
     loadStationArrivals(station)
     response, _ := json.Marshal(station)
     w.Write(response)

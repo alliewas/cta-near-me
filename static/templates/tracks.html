@@ -13,7 +13,7 @@
       <p>loading all the stations</p>
     </div>
     <div ng-switch-when="stations">
-      <p><a href="#" ng-click="loadLines()">Back</a></p>
+      <p><a href="#" ng-click="loadLines()" class="back-button">Back</a></p>
       <div class="line line-{{currentLine.Key}}"><h2>{{currentLine.Name}}</h2></div>
       <ul class="stations-list">
         <li ng-repeat="station in stations">
@@ -25,7 +25,7 @@
       <p>loading individual station</p>
     </div>
     <div ng-switch-when="station">
-      <p><a href="#" ng-click="loadStations(currentLine)">Back</a></p>
+      <p><a href="#" ng-click="loadStations(currentLine)" class="back-button">Back</a></p>
       <station station="station"></station>
     </div>
     <div ng-switch-when="error">

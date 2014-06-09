@@ -5,7 +5,7 @@
   </div>
   <div class="clearfix"></div>
   <div ng-repeat="stop in station.StopArrivals">
-    <div class="station line-{{station.LineKey}}">
+    <div class="station line-{{stop.LineKey}}">
       {{stop.Name}}
     </div>
     <div class="row no-margin">
@@ -16,7 +16,7 @@
         <span ng-show="arrival.IsApproaching">
           Approaching
         </span>
-        <hr class="line-{{station.LineKey}}" />
+        <hr class="line-{{stop.LineKey}}" />
         <span>{{arrival.ArrivingAt | date: "shortTime"}}</span>
       </div>
     </div>

@@ -55,6 +55,10 @@ CTA.controller("HeaderCtrl", ["$scope", "Bus", "Tabs", function($scope, Bus, Tab
   $scope.reload = function() {
     Bus.broadcast("reload");
   }
+
+  $scope.refreshPage = function() {
+    location.reload(true);
+  }
 }]);
 
 // Footer
@@ -192,7 +196,6 @@ CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", function($scope,
       $scope.state = "loading-station";
       $http({
         method: "GET", url: "/api/station", params: {
-          line: station.LineKey,
           stationId: station.StationId
         }
       }).success(function(response) {

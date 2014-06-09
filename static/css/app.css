@@ -23,6 +23,10 @@ body {
   margin-top: 30px;
 }
 
+.back-button {
+  font-size: 16pt;
+}
+
 ul.stations-list li {
   font-size: 20pt;
 }
