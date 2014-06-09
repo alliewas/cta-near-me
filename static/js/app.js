@@ -17,9 +17,38 @@ CTA.factory("Bus", ["$rootScope", function($rootScope) {
   };
 }]);
 
+// Line
+
+CTA.service("Line", ["$rootScope", function($rootScope) {
+  var service = {
+    current: null,
+    set: function(line) {
+      service.current = line;
+      $rootScope.$broadcast("Line.current");
+    },
+    clear: function() {
+      service.current = null;
+    }
+  };
+  return service;
+}]);
+
+// Station
+
+CTA.service("Station", ["$rootScope", function($rootScope) {
+  var service = {
+    current: null,
+    set: function(station) {
+      service.current = station;
+      $rootScope.$broadcast("Station.current");
+    }
+  };
+  return service;
+}]);
+
 // Tabs
 
-CTA.service("Tabs", ["$rootScope", "$location", "$anchorScroll", function($rootScope, $location, $anchorScroll) {
+CTA.service("Tabs", ["$rootScope", "$location", "$anchorScroll", "Line", function($rootScope, $location, $anchorScroll, Line) {
   var service = {
     current: "nearby",
 
@@ -31,11 +60,14 @@ CTA.service("Tabs", ["$rootScope", "$location", "$anchorScroll", function($rootS
       return service.current == "tracks";
     },
 
-    set: function(tab) {
+    set: function(tab, skipBroadcast) {
       service.current = tab;
-      $rootScope.$broadcast("Tabs." + tab);
       $location.hash("top");
       $anchorScroll();
+      Line.clear();
+      if (!skipBroadcast) {
+        $rootScope.$broadcast("Tabs." + tab);
+      }
     }
   };
   return service;
@@ -71,10 +103,10 @@ CTA.controller("FooterCtrl", ["$scope", "Bus", function($scope, Bus) {
 
 // Nearby
 
-CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", function($scope, $http, Bus, Tabs) {
+CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", "Station", function($scope, $http, Bus, Tabs, Station) {
   console.log("NearbyCtrl");
 
-  $scope.state = null; // loading-geo, no-geo, loading-data, has-stations, empty-stations, error
+  $scope.state = null; // loading-geo, no-geo, geo-error, loading-data, has-stations, empty-stations, error
   $scope.latitude = null;
   $scope.longitude = null;
 
@@ -97,7 +129,7 @@ CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", function($scope,
   }
   var geoError = function(msg) {
     console.log(msg);
-    $scope.state = "error";
+    $scope.state = "geo-error";
   }
 
   $scope.load = function() {
@@ -122,6 +154,11 @@ CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", function($scope,
         $scope.state = "error";
       });
     }
+  }
+
+  $scope.gotoStation = function(station) {
+    Tabs.set("tracks", true);
+    Station.set(station);
   }
 
   $scope.$on("reload", function() {
@@ -151,11 +188,13 @@ CTA.directive("nearby", function() {
 
 // Tracks
 
-CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", function($scope, $http, Bus, Tabs) {
+CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station", function($scope, $http, Bus, Tabs, Line, Station) {
   console.log("TracksCtrl");
 
+  $scope.Line = Line;
+  $scope.Station = Station;
+
   $scope.state = null; // loading-lines, lines, loading-stations, stations, loading-station, station, error
-  //$scope.currentLineKey = null;
 
   $scope.loadLines = function() {
     console.log("loadLines");
@@ -174,7 +213,6 @@ CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", function($scope,
 
   $scope.loadStations = function(line) {
     if (line) {
-      $scope.currentLine = line;
       $scope.state = "loading-stations";
       $http({
         method: "GET", url: "/api/stations", params: {
@@ -192,7 +230,6 @@ CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", function($scope,
 
   $scope.loadStation = function(station) {
     if (station) {
-      $scope.currentStation = station;
       $scope.state = "loading-station";
       $http({
         method: "GET", url: "/api/station", params: {
@@ -208,19 +245,22 @@ CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", function($scope,
     }
   }
 
+  $scope.$on("Line.current", function() {
+    $scope.loadStations(Line.current);
+  });
+
+  $scope.$on("Station.current", function() {
+    $scope.loadStation(Station.current);
+  });
+
   $scope.$on("reload", function() {
     if (Tabs.tracks()) {
       switch($scope.state) {
         case "station":
-          $scope.loadStation($scope.currentStation);
+          $scope.loadStation(Station.current);
           break;
       }
     }
-  });
-
-  $scope.$watch("currentLineKey", function() {
-    console.log("currentLineKey", $scope.currentLineKey);
-    $scope.loadStations();
   });
 
   $scope.$on("Tabs.tracks", function() {
