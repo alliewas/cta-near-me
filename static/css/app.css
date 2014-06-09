@@ -24,7 +24,8 @@ body {
 }
 
 .back-button {
-  font-size: 16pt;
+  margin: 10px;
+  font-size: 18pt;
 }
 
 .stations-list {
@@ -122,6 +123,10 @@ body {
 
 .line-Y {
   background-color: #f9e300;
+}
+
+#header .nav-pills li {
+  font-size: 16pt;
 }
 
 #footer .btn {

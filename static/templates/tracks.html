@@ -13,7 +13,7 @@
       <spinner message="Loading Stations"></spinner>
     </div>
     <div ng-switch-when="stations">
-      <p><a href="#" ng-click="loadLines()" class="back-button">Back</a></p>
+      <a href="#" ng-click="loadLines()" class="back-button glyphicon glyphicon-chevron-left"></a>
       <div class="line line-{{Line.current.Key}}"><h2>{{Line.current.Name}}</h2></div>
       <table class="table stations-list">
         <tr ng-repeat="station in stations" ng-click="Station.set(station)">
@@ -30,7 +30,7 @@
       <spinner message="Loading {{Station.current.Name}}"></spinner>
     </div>
     <div ng-switch-when="station">
-      <p ng-show="Line.current"><a href="#" ng-click="Line.set(Line.current)" class="back-button">Back</a></p>
+      <a ng-show="Line.current" href="#" ng-click="Line.set(Line.current)" class="back-button glyphicon glyphicon-chevron-left"></a>
       <station station="station"></station>
     </div>
     <div ng-switch-when="error">
