@@ -26,16 +26,16 @@ func (s Station) Point() *geo.Point {
 
 type StationWrapper struct {
     Station
-    Distance float64
+    Kilometers float64
     StopArrivals []*StopWrapper
 }
 
-func newStationWrapper(station Station, distance float64) StationWrapper {
+func newStationWrapper(station Station, kilometers float64) StationWrapper {
     stops := make([]*StopWrapper, len(station.Stops))
     for i, stop := range station.Stops {
         stops[i] = &StopWrapper{stop, nil}
     }
-    return StationWrapper{station, distance, stops}
+    return StationWrapper{station, kilometers, stops}
 }
 
 type stationSorter struct {
@@ -59,7 +59,7 @@ func newSorter(nearbyStations []StationWrapper) stationSorter {
     return stationSorter{
         nearbyStations,
         func(s1, s2 StationWrapper) bool {
-            return s1.Distance < s2.Distance
+            return s1.Kilometers < s2.Kilometers
         },
     }
 }
@@ -115,9 +115,9 @@ func recurseStationsNear(point *geo.Point, threshold float64, attemptsRemaining 
 func calculateStationsNear(point *geo.Point, threshold float64) []StationWrapper {
     near := []StationWrapper{}
     for _, station := range stations {
-        distance := point.GreatCircleDistance(station.Point())
-        if distance <= threshold {
-            wrapper := newStationWrapper(station, distance)
+        kilometers := point.GreatCircleDistance(station.Point())
+        if kilometers <= threshold {
+            wrapper := newStationWrapper(station, kilometers)
             near = append(near, wrapper)
         }
     }
