@@ -11,13 +11,20 @@ import (
 )
 
 var key, timeLayout string
+var cache TimedCache
 
 func init() {
     key = config.Get().CtaApi.Key
     timeLayout = "20060102 15:04:05"
+    cache = NewTimedCache()
 }
 
 func Load(stopId int) ([]Eta, error) {
+    if cached, ok := cache.Get(stopId); ok {
+        log.Printf("cached stop %v", stopId)
+        return cached.([]Eta), nil
+    }
+    log.Printf("fetching stop %v", stopId)
     url := fmt.Sprintf("http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&stpid=%d", key, stopId)
     response, err := http.Get(url)
     if err != nil {
@@ -32,7 +39,9 @@ func Load(stopId int) ([]Eta, error) {
             log.Printf("failed: %v", err)
             return nil, err
         } else {
-            return etas(result.Etas), nil
+            etas := etas(result.Etas)
+            cache.Set(stopId, etas)
+            return etas, nil
         }
     }
 }
