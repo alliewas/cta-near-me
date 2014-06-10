@@ -17,6 +17,18 @@ CTA.factory("Bus", ["$rootScope", function($rootScope) {
   };
 }]);
 
+// Analytics
+
+CTA.service("Analytics", ["$rootScope", "$window", function($rootScope, $window) {
+  var service = {
+    track: function(category, action, label, value) {
+      console.log("Track: ", category, action, label, value);
+      $window.ga("send", "event", category, action, label, value);
+    }
+  };
+  return service;
+}]);
+
 // Location
 
 CTA.service("Location", ["$rootScope", function($rootScope) {
@@ -171,12 +183,13 @@ CTA.directive("footer", function() {
 
 // Nearby
 
-CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", "Station", "Loading", "Location", function($scope, $http, Bus, Tabs, Station, Loading, Location) {
+CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Analytics", "Tabs", "Station", "Loading", "Location", function($scope, $http, Bus, Analytics, Tabs, Station, Loading, Location) {
   console.log("NearbyCtrl");
 
   $scope.state = null; // loading-geo, no-geo, geo-error, loading-data, has-stations, empty-stations, error
 
   $scope.getLocation = function() {
+    Analytics.track("Nearby", "getLocation");
     if (Location.available()) {
       $scope.state = "loading-geo";
       Location.get(geoSuccess, geoError);
@@ -193,6 +206,7 @@ CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Tabs", "Station", "Load
   }
   var geoError = function(msg) {
     console.log(msg);
+    Analytics.track("Nearby", "geoError", msg);
     $scope.state = "geo-error";
   }
 
@@ -257,7 +271,7 @@ CTA.directive("nearby", function() {
 
 // Tracks
 
-CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station", "Loading", "Location", function($scope, $http, Bus, Tabs, Line, Station, Loading, Location) {
+CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Analytics", "Tabs", "Line", "Station", "Loading", "Location", function($scope, $http, Bus, Analytics, Tabs, Line, Station, Loading, Location) {
   console.log("TracksCtrl");
 
   $scope.Line = Line;
@@ -267,6 +281,7 @@ CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station
 
   $scope.loadLines = function() {
     console.log("loadLines");
+    Analytics.track("Tracks", "loadLines");
     $scope.state = "loading-lines";
     $http({
       method: "GET", url: "/api/lines"
@@ -282,6 +297,7 @@ CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station
 
   $scope.loadStations = function(line) {
     if (line) {
+      Analytics.track("Tracks", "loadStations", line.Key);
       $scope.state = "loading-stations";
       $http({
         method: "GET", url: "/api/stations", params: {
@@ -301,6 +317,7 @@ CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Tabs", "Line", "Station
 
   $scope.loadStation = function(station) {
     if (station) {
+      Analytics.track("Tracks", "loadStation", station.StationId + ":" + station.Name);
       $scope.state = "loading-station";
       $http({
         method: "GET", url: "/api/station", params: {
