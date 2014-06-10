@@ -13,11 +13,13 @@ You will need this file whether you're developing locally or deploying to a serv
 
 ```
 [CtaApi]
-key = [get this from the CTA](http://www.transitchicago.com/developers/traintracker.aspx)
+key = xxxxxxxxxx
 [Host]
 port = :80
 path = /path/to/cta-near-me
 ```
+
+Get your API key [from the CTA](http://www.transitchicago.com/developers/traintracker.aspx).
 
 ## systemd config
 
