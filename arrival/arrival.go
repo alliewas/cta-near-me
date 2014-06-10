@@ -67,7 +67,7 @@ type Eta struct {
     IsDelayed bool
     PredictedAt time.Time
     ArrivingAt time.Time
-    ArrivingInSeconds time.Duration
+    ArrivingInMinutes time.Duration
 }
 
 func etas(in []eta) []Eta {
@@ -76,7 +76,7 @@ func etas(in []eta) []Eta {
     for i, v := range in {
         predictedAt, _ := time.Parse(timeLayout, v.PredictedAt)
         arrivingAt, _ := time.ParseInLocation(timeLayout, v.ArrivingAt, chicago)
-        arrivingInSeconds := arrivingAt.Sub(time.Now()) / time.Second
+        arrivingInMinutes := arrivingAt.Sub(time.Now()) / time.Minute
         out[i] = Eta{
             v.StopId,
             v.IsApproaching,
@@ -84,7 +84,7 @@ func etas(in []eta) []Eta {
             v.IsDelayed,
             predictedAt,
             arrivingAt,
-            arrivingInSeconds,
+            arrivingInMinutes,
         }
     }
     return out
