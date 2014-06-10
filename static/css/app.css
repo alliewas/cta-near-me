@@ -19,10 +19,6 @@ body {
   margin: 0;
 }
 
-.distance {
-  margin-top: 30px;
-}
-
 .back-button {
   margin: 10px;
   font-size: 18pt;
@@ -39,9 +35,25 @@ body {
   font-weight: bold;
 }
 
+.line .name {
+  font-size: 20pt;
+}
+
 .station {
+  margin-top: 5px;
+}
+
+.station .name {
+  font-size: 20pt;
+}
+
+.station .stop {
   padding: 10px;
   color: white;
+}
+
+.station .distance {
+  margin-top: 10px;
 }
 
 .arrival {
