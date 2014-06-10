@@ -47,6 +47,10 @@ body {
   font-size: 20pt;
 }
 
+.station .name a {
+  color: black;
+}
+
 .station .stop {
   padding: 10px;
   color: white;
