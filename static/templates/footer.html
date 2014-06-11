@@ -1,7 +1,16 @@
-<div id="footer" class="navbar navbar-default navbar-fixed-bottom navbar-translucent" ng-show="Loading.loadable">
-  <div class="container text-center">
-    <button class="btn btn-default" ng-class="{spin: Loading.loading}" ng-click="reload()">
-      <h2 class="glyphicon glyphicon-refresh"></h2>
-    </button>
+<div id="footer" class="navbar navbar-default navbar-fixed-bottom navbar-translucent" ng-show="loadable">
+  <div class="row">
+    <div class="col-xs-5">
+    </div>
+    <div class="col-xs-2 text-center">
+      <button class="btn btn-default" ng-class="{spin: loading}" ng-click="reload()">
+        <h2 class="glyphicon glyphicon-refresh"></h2>
+      </button>
+    </div>
+    <div class="col-xs-5 text-right">
+      <div ng-repeat="line in lines()" ng-click="lineToggle(line)" class="toggle line-{{line}}" ng-class="{disabled: lineDisabled(line)}">
+        <div class="name">{{line}}</div>
+      </div>
+    </div>
   </div>
 </div>

@@ -106,39 +106,67 @@ body {
 }
 
 .line-Red {
-  background-color: #c60c30;
+  background: rgba(198, 12, 48, 1);
+}
+
+.line-Red.disabled {
+  background: rgba(198, 12, 48, 0.3);
 }
 
 .line-Blue {
-  background-color: #00a1de;
+  background: rgba(0, 161, 222, 1);
+}
+
+.line-Blue.disabled {
+  background: rgba(0, 161, 222, 0.3);
 }
 
 .line-Brn {
-  background-color: #62361b;
+  background: rgba(98, 54, 27, 1);
+}
+
+.line-Brn.disabled {
+  background: rgba(98, 54, 27, 0.3);
 }
 
 .line-G {
-  background-color: #009b3a;
+  background: rgba(0, 155, 58, 1);
+}
+
+.line-G.disabled {
+  background: rgba(0, 155, 58, 0.3);
 }
 
 .line-Org {
-  background-color: #f9461c;
+  background: rgba(249, 70, 28, 1);
+}
+
+.line-Org.disabled {
+  background: rgba(249, 70, 28, 0.3);
 }
 
 .line-P {
-  background-color: #522398;
+  background: rgba(80, 35, 152, 1);
 }
 
-.line-Pexp {
-  background-color: #522398;
+.line-P.disabled {
+  background: rgba(80, 35, 152, 0.3);
 }
 
 .line-Pink {
-  background-color: #e27ea6;
+  background: rgba(226, 126, 166, 1);
+}
+
+.line-Pink.disabled {
+  background: rgba(226, 126, 166, 0.3);
 }
 
 .line-Y {
-  background-color: #f9e300;
+  background: rgba(249, 227, 0, 1);
+}
+
+.line-Y.disabled {
+  background: rgba(249, 227, 0, 0.3);
 }
 
 #header .nav-pills li {
@@ -209,4 +237,21 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+.toggle {
+  border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  text-align: center;
+  margin: 2px;
+}
+
+.toggle .name {
+  margin-top: 6px;
+  color: white;
 }

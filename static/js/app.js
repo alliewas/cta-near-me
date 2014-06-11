@@ -89,6 +89,11 @@ CTA.service("LineService", function($rootScope, $http) {
 CTA.factory("Station", function() {
   return function(data) {
     angular.extend(this, {
+      lines: function() {
+        return $.unique(this.Stops.map(function(s) {
+          return s.LineKey;
+        }));
+      }
     }, data);
   };
 });
@@ -96,6 +101,9 @@ CTA.factory("Station", function() {
 CTA.service("StationService", function($rootScope, $http, Location, Station) {
   var service = {
     current: null,
+    clearCurrent: function() {
+      service.current = null;
+    },
     loadStation: function(station) {
       if (station) {
         $rootScope.$broadcast("StationService.current.loading");
@@ -150,6 +158,11 @@ CTA.service("StationService", function($rootScope, $http, Location, Station) {
           $rootScope.$broadcast("StationService.nearby.error");
         });
       }
+    },
+    linesForList: function() {
+      return $.unique([].concat.apply([], service.list.map(function(s) {
+        return s.lines();
+      })));
     }
   };
   return service;
@@ -167,7 +180,7 @@ CTA.service("Loading", function($rootScope) {
 
 // Tabs
 
-CTA.service("Tabs", function($rootScope, $location, $anchorScroll, LineService) {
+CTA.service("Tabs", function($rootScope, $location, $anchorScroll, LineService, StationService, LineToggle) {
   var service = {
     current: "nearby",
 
@@ -184,6 +197,8 @@ CTA.service("Tabs", function($rootScope, $location, $anchorScroll, LineService) 
       $location.hash("top");
       $anchorScroll();
       LineService.clearCurrent();
+      StationService.clearCurrent();
+      LineToggle.clear();
       if (!skipBroadcast) {
         $rootScope.$broadcast("Tabs." + tab);
       }
@@ -194,6 +209,24 @@ CTA.service("Tabs", function($rootScope, $location, $anchorScroll, LineService) 
 
 CTA.controller("TabsCtrl", function($scope, Tabs) {
   $scope.Tabs = Tabs;
+});
+
+// LineToggle
+
+CTA.service("LineToggle", function($rootScope) {
+  var service = {
+    disabledLines: {},
+    clear: function() {
+      service.disabledLines = {};
+    },
+    toggle: function(line) {
+      service.disabledLines[line] = !service.disabledLines[line];
+    },
+    isDisabled: function(line) {
+      return service.disabledLines[line];
+    }
+  };
+  return service;
 });
 
 // Header
@@ -224,11 +257,34 @@ CTA.directive("header", function() {
 
 // Footer
 
-CTA.controller("FooterCtrl", function($scope, Bus, Loading) {
-  $scope.Loading = Loading;
+CTA.controller("FooterCtrl", function($scope, Bus, Loading, StationService, LineToggle) {
+  $scope.$watch(function(){ return Loading.loadable; }, function(loadable) {
+    $scope.loadable = loadable;
+  });
+  $scope.$watch(function(){ return Loading.loading; }, function(loading) {
+    $scope.loading = loading;
+  });
 
   $scope.reload = function() {
     Bus.broadcast("reload");
+  }
+
+  $scope.lines = function() {
+    if (StationService.current) {
+      return StationService.current.lines();
+    } else if (StationService.list) {
+      return StationService.linesForList();
+    } else {
+      return [];
+    }
+  }
+
+  $scope.lineToggle = function(line) {
+    LineToggle.toggle(line);
+  }
+
+  $scope.lineDisabled = function(line) {
+    return LineToggle.isDisabled(line);
   }
 });
 
@@ -244,7 +300,7 @@ CTA.directive("footer", function() {
 
 // Nearby
 
-CTA.controller("NearbyCtrl", function($scope, Bus, Analytics, Tabs, StationService, Loading, Location) {
+CTA.controller("NearbyCtrl", function($scope, Bus, Analytics, Tabs, StationService, Loading, Location, LineToggle) {
   console.log("NearbyCtrl");
 
   $scope.state = null; // loading-geo, no-geo, geo-error, loading-data, has-stations, empty-stations, error
@@ -290,6 +346,10 @@ CTA.controller("NearbyCtrl", function($scope, Bus, Analytics, Tabs, StationServi
     }
   });
 
+  $scope.isLineDisabled = function(line) {
+    return LineToggle.isDisabled(line);
+  }
+
   $scope.gotoStation = function(station) {
     Tabs.set("tracks", true);
     StationService.current = station;
@@ -328,7 +388,7 @@ CTA.directive("nearby", function() {
 
 // Tracks
 
-CTA.controller("TracksCtrl", function($scope, Bus, Analytics, Tabs, LineService, StationService, Loading, Location) {
+CTA.controller("TracksCtrl", function($scope, Bus, Analytics, Tabs, LineService, StationService, Loading, Location, LineToggle) {
   console.log("TracksCtrl");
 
   $scope.state = null; // loading-lines, lines, loading-stations, stations, loading-station, station, error
@@ -406,6 +466,10 @@ CTA.controller("TracksCtrl", function($scope, Bus, Analytics, Tabs, LineService,
   $scope.$watch(function(){ return StationService.current; }, function(current, old) {
     $scope.station = current;
   });
+
+  $scope.isLineDisabled = function(line) {
+    return LineToggle.isDisabled(line);
+  }
 
   $scope.$on("reload", function() {
     if (Tabs.tracks()) {

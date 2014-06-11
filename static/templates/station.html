@@ -7,7 +7,7 @@
     <span class="number distance">{{station.Kilometers | kmToMiles | number: 2}}</span> mi
   </div>
   <div class="clearfix"></div>
-  <div ng-repeat="stop in station.StopArrivals">
+  <div ng-repeat="stop in station.StopArrivals" ng-hide="isLineDisabled(stop.LineKey)">
     <div class="stop line-{{stop.LineKey}}">
       {{stop.Name}}
     </div>
