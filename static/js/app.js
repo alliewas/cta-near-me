@@ -237,7 +237,7 @@ CTA.directive("footer", function() {
 
 // Nearby
 
-CTA.controller("NearbyCtrl", function($scope, $http, Bus, Analytics, Tabs, StationService, Loading, Location) {
+CTA.controller("NearbyCtrl", function($scope, Bus, Analytics, Tabs, StationService, Loading, Location) {
   console.log("NearbyCtrl");
 
   $scope.state = null; // loading-geo, no-geo, geo-error, loading-data, has-stations, empty-stations, error
@@ -321,7 +321,7 @@ CTA.directive("nearby", function() {
 
 // Tracks
 
-CTA.controller("TracksCtrl", function($scope, $http, Bus, Analytics, Tabs, LineService, StationService, Loading, Location) {
+CTA.controller("TracksCtrl", function($scope, Bus, Analytics, Tabs, LineService, StationService, Loading, Location) {
   console.log("TracksCtrl");
 
   $scope.state = null; // loading-lines, lines, loading-stations, stations, loading-station, station, error
