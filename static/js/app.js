@@ -86,7 +86,14 @@ CTA.service("LineService", function($rootScope, $http) {
 
 // Station
 
-CTA.service("StationService", function($rootScope, $http, Location) {
+CTA.factory("Station", function() {
+  return function(data) {
+    angular.extend(this, {
+    }, data);
+  };
+});
+
+CTA.service("StationService", function($rootScope, $http, Location, Station) {
   var service = {
     current: null,
     loadStation: function(station) {
@@ -101,7 +108,7 @@ CTA.service("StationService", function($rootScope, $http, Location) {
         }).success(function(response) {
           console.log(response);
           $rootScope.$broadcast("StationService.current.success");
-          service.current = response;
+          service.current = new Station(response);
         }).error(function() {
           $rootScope.$broadcast("StationService.current.error");
         });
@@ -120,7 +127,7 @@ CTA.service("StationService", function($rootScope, $http, Location) {
         }).success(function(response) {
           console.log(response);
           $rootScope.$broadcast("StationService.list.success");
-          service.list = response;
+          service.list = response.map(function(s){ return new Station(s); });
         }).error(function() {
           $rootScope.$broadcast("StationService.list.error");
         });
@@ -137,7 +144,7 @@ CTA.service("StationService", function($rootScope, $http, Location) {
         }).success(function(response) {
           console.log(response);
           $rootScope.$broadcast("StationService.nearby.success");
-          service.list = response;
+          service.list = response.map(function(s){ return new Station(s); });
         }).error(function() {
           console.log("error");
           $rootScope.$broadcast("StationService.nearby.error");
