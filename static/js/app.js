@@ -70,9 +70,6 @@ CTA.service("Location", function($rootScope) {
 CTA.service("LineService", function($rootScope, $http) {
   var service = {
     current: null,
-    setCurrent: function(line) {
-      service.current = line;
-    },
     clearCurrent: function() {
       service.current = null;
     },
@@ -100,13 +97,28 @@ CTA.service("LineService", function($rootScope, $http) {
 CTA.service("StationService", function($rootScope, $http, Location) {
   var service = {
     current: null,
-    setCurrent: function(station) {
-      service.current = station;
+    loadStation: function(station) {
+      if (station) {
+        $rootScope.$broadcast("StationService.current.loading");
+        $http({
+          method: "GET", url: "/api/station", params: {
+            stationId: station.StationId,
+            latitude: Location.latitude,
+            longitude: Location.longitude
+          }
+        }).success(function(response) {
+          console.log(response);
+          $rootScope.$broadcast("StationService.current.success");
+          service.current = response;
+        }).error(function() {
+          $rootScope.$broadcast("StationService.current.error");
+        });
+      }
     },
     list: [],
     loadByLine: function(line) {
       if (line) {
-        $rootScope.$broadcast("StationService.loading");
+        $rootScope.$broadcast("StationService.list.loading");
         $http({
           method: "GET", url: "/api/stations", params: {
             line: line.Key,
@@ -115,10 +127,10 @@ CTA.service("StationService", function($rootScope, $http, Location) {
           }
         }).success(function(response) {
           console.log(response);
-          $rootScope.$broadcast("StationService.success");
+          $rootScope.$broadcast("StationService.list.success");
           service.list = response;
         }).error(function() {
-          $rootScope.$broadcast("StationService.error");
+          $rootScope.$broadcast("StationService.list.error");
         });
       }
     }
@@ -268,7 +280,8 @@ CTA.controller("NearbyCtrl", function($scope, $http, Bus, Analytics, Tabs, Stati
 
   $scope.gotoStation = function(station) {
     Tabs.set("tracks", true);
-    StationService.setCurrent(station);
+    StationService.current = station;
+    StationService.loadStation(station);
   }
 
   $scope.$on("reload", function() {
@@ -334,13 +347,13 @@ CTA.controller("TracksCtrl", function($scope, $http, Bus, Analytics, Tabs, LineS
     }
   }
 
-  $scope.$on("StationService.loading", function() {
+  $scope.$on("StationService.list.loading", function() {
     $scope.state = "loading-stations";
   });
-  $scope.$on("StationService.success", function() {
+  $scope.$on("StationService.list.success", function() {
     $scope.state = "stations";
   });
-  $scope.$on("StationService.error", function() {
+  $scope.$on("StationService.list.error", function() {
     $scope.state = "error";
   });
   $scope.$watch(function(){ return StationService.list; }, function(stations) {
@@ -350,25 +363,22 @@ CTA.controller("TracksCtrl", function($scope, $http, Bus, Analytics, Tabs, LineS
   $scope.loadStation = function(station) {
     if (station) {
       Analytics.track("Tracks", "loadStation", station.StationId + ":" + station.Name);
-      $scope.state = "loading-station";
-      $http({
-        method: "GET", url: "/api/station", params: {
-          stationId: station.StationId,
-          latitude: Location.latitude,
-          longitude: Location.longitude
-        }
-      }).success(function(response) {
-        console.log(response);
-        $scope.state = "station";
-        $scope.station = response;
-      }).error(function() {
-        $scope.state = "error";
-      });
+      StationService.loadStation(station);
     }
   }
 
+  $scope.$on("StationService.current.loading", function() {
+    $scope.state = "loading-station";
+  });
+  $scope.$on("StationService.current.success", function() {
+    $scope.state = "station";
+  });
+  $scope.$on("StationService.current.error", function() {
+    $scope.state = "error";
+  });
+
   $scope.setLine = function(line) {
-    LineService.setCurrent(line);
+    LineService.current = line;
     $scope.loadStations(line);
   };
 
@@ -377,12 +387,12 @@ CTA.controller("TracksCtrl", function($scope, $http, Bus, Analytics, Tabs, LineS
   });
 
   $scope.setStation = function(station) {
-    StationService.setCurrent(station);
+    StationService.current = station;
+    $scope.loadStation(station);
   };
 
-  $scope.$watch(function(){ return StationService.current; }, function(current) {
-    $scope.currentStation = current;
-    $scope.loadStation(current);
+  $scope.$watch(function(){ return StationService.current; }, function(current, old) {
+    $scope.station = current;
   });
 
   $scope.$on("reload", function() {
