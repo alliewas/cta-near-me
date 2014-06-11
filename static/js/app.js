@@ -35,31 +35,23 @@ CTA.service("Location", function($rootScope) {
   var service = {
     latitude: null,
     longitude: null,
-    successFunction: null,
-    errorFunction: null,
 
     available: function() {
       return navigator.geolocation;
     },
 
-    get: function(successFunction, errorFunction) {
-      service.successFunction = successFunction;
-      service.errorFunction = errorFunction;
+    get: function() {
       navigator.geolocation.getCurrentPosition(service.success, service.error);
     },
 
     success: function(position) {
       service.latitude = position.coords.latitude;
       service.longitude = position.coords.longitude;
-      if (service.successFunction) {
-        service.successFunction(position);
-      }
+      $rootScope.$broadcast("Location.success");
     },
 
     error: function(msg) {
-      if (service.errorFunction) {
-        service.errorFunction(msg);
-      }
+      $rootScope.$broadcast("Location.error");
     }
   };
   return service;
@@ -115,7 +107,7 @@ CTA.service("StationService", function($rootScope, $http, Location) {
         });
       }
     },
-    list: [],
+    list: null,
     loadByLine: function(line) {
       if (line) {
         $rootScope.$broadcast("StationService.list.loading");
@@ -131,6 +123,24 @@ CTA.service("StationService", function($rootScope, $http, Location) {
           service.list = response;
         }).error(function() {
           $rootScope.$broadcast("StationService.list.error");
+        });
+      }
+    },
+    loadNearby: function() {
+      if (Location.latitude && Location.longitude) {
+        $rootScope.$broadcast("StationService.nearby.loading");
+        $http({
+          method: "GET", url: "/api/nearby", params: {
+            latitude: Location.latitude,
+            longitude: Location.longitude
+          }
+        }).success(function(response) {
+          console.log(response);
+          $rootScope.$broadcast("StationService.nearby.success");
+          service.list = response;
+        }).error(function() {
+          console.log("error");
+          $rootScope.$broadcast("StationService.nearby.error");
         });
       }
     }
@@ -236,47 +246,42 @@ CTA.controller("NearbyCtrl", function($scope, $http, Bus, Analytics, Tabs, Stati
     Analytics.track("Nearby", "getLocation");
     if (Location.available()) {
       $scope.state = "loading-geo";
-      Location.get(geoSuccess, geoError);
+      Location.get();
     } else {
       $scope.state = "no-geo";
     }
   }
 
-  var geoSuccess = function(position) {
+  $scope.$on("Location.success", function() {
     console.log("got coords");
-    console.log(position.coords);
-
     $scope.load();
-  }
-  var geoError = function(msg) {
+  });
+  $scope.$on("Location.error", function() {
     console.log(msg);
     Analytics.track("Nearby", "geoError", msg);
     $scope.state = "geo-error";
-  }
+  });
 
   $scope.load = function() {
-    if (Location.latitude && Location.longitude) {
-      console.log("loading!!!");
-      $scope.state = "loading-data";
-      $http({
-        method: "GET", url: "/api/nearby", params: {
-          latitude: Location.latitude,
-          longitude: Location.longitude
-        }
-      }).success(function(response) {
-        console.log(response);
-        if (response.length > 0) {
-          $scope.state = "has-stations";
-        } else {
-          $scope.state = "empty-stations";
-        }
-        $scope.stations = response;
-      }).error(function() {
-        console.log("error");
-        $scope.state = "error";
-      });
-    }
+    StationService.loadNearby();
   }
+
+  $scope.$on("StationService.nearby.loading", function() {
+    $scope.state = "loading-data";
+  });
+  $scope.$on("StationService.nearby.error", function() {
+    $scope.state = "error";
+  });
+  $scope.$watch(function(){ return StationService.list; }, function(stations) {
+    $scope.stations = stations;
+    if (stations) {
+      if (stations.length > 0) {
+        $scope.state = "has-stations";
+      } else {
+        $scope.state = "empty-stations";
+      }
+    }
+  });
 
   $scope.gotoStation = function(station) {
     Tabs.set("tracks", true);
