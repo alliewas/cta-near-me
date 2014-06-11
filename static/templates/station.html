@@ -1,6 +1,6 @@
 <div class="station">
   <div class="pull-left">
-    <a ng-show="Line.current" href="#" ng-click="Line.set(Line.current)" class="back-button glyphicon glyphicon-chevron-left"></a>
+    <a ng-show="currentLine" href="#" ng-click="setLine(currentLine)" class="back-button glyphicon glyphicon-chevron-left"></a>
     <span class="name"><a href="#" ng-click="gotoStation(station)">{{station.Name}}</a></span>
   </div>
   <div class="pull-right distance" ng-show="{{station.Kilometers >= 0}}">

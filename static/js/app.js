@@ -67,12 +67,11 @@ CTA.service("Location", function($rootScope) {
 
 // Line
 
-CTA.service("Line", function($rootScope) {
+CTA.service("LineService", function($rootScope) {
   var service = {
     current: null,
     set: function(line) {
       service.current = line;
-      $rootScope.$broadcast("Line.current");
     },
     clear: function() {
       service.current = null;
@@ -106,7 +105,7 @@ CTA.service("Loading", function($rootScope) {
 
 // Tabs
 
-CTA.service("Tabs", function($rootScope, $location, $anchorScroll, Line) {
+CTA.service("Tabs", function($rootScope, $location, $anchorScroll, LineService) {
   var service = {
     current: "nearby",
 
@@ -122,7 +121,7 @@ CTA.service("Tabs", function($rootScope, $location, $anchorScroll, Line) {
       service.current = tab;
       $location.hash("top");
       $anchorScroll();
-      Line.clear();
+      LineService.clear();
       if (!skipBroadcast) {
         $rootScope.$broadcast("Tabs." + tab);
       }
@@ -271,10 +270,9 @@ CTA.directive("nearby", function() {
 
 // Tracks
 
-CTA.controller("TracksCtrl", function($scope, $http, Bus, Analytics, Tabs, Line, Station, Loading, Location) {
+CTA.controller("TracksCtrl", function($scope, $http, Bus, Analytics, Tabs, LineService, Station, Loading, Location) {
   console.log("TracksCtrl");
 
-  $scope.Line = Line;
   $scope.Station = Station;
 
   $scope.state = null; // loading-lines, lines, loading-stations, stations, loading-station, station, error
@@ -335,8 +333,13 @@ CTA.controller("TracksCtrl", function($scope, $http, Bus, Analytics, Tabs, Line,
     }
   }
 
-  $scope.$on("Line.current", function() {
-    $scope.loadStations(Line.current);
+  $scope.setLine = function(line) {
+    LineService.set(line);
+    $scope.loadStations(line);
+  };
+
+  $scope.$watch(function() { return LineService.current; }, function(current) {
+    $scope.currentLine = current;
   });
 
   $scope.$on("Station.current", function() {
