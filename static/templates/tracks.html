@@ -18,7 +18,7 @@
         <span class="name">{{currentLine.Name}}</span>
       </div>
       <table class="table stations-list">
-        <tr ng-repeat="station in stations" ng-click="Station.set(station)">
+        <tr ng-repeat="station in stations" ng-click="setStation(station)">
           <td>
             {{station.Name}}
           </td>
@@ -29,7 +29,7 @@
       </table>
     </div>
     <div ng-switch-when="loading-station">
-      <spinner message="Loading {{Station.current.Name}}"></spinner>
+      <spinner message="Loading {{currentStation.Name}}"></spinner>
     </div>
     <div ng-switch-when="station">
       <station station="station"></station>
