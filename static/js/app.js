@@ -67,14 +67,29 @@ CTA.service("Location", function($rootScope) {
 
 // Line
 
-CTA.service("LineService", function($rootScope) {
+CTA.service("LineService", function($rootScope, $http) {
   var service = {
     current: null,
-    set: function(line) {
+    setCurrent: function(line) {
       service.current = line;
     },
-    clear: function() {
+    clearCurrent: function() {
       service.current = null;
+    },
+    list: [],
+    load: function() {
+      console.log("LineService.load");
+      $rootScope.$broadcast("LineService.loading");
+      $http({
+        method: "GET", url: "/api/lines"
+      }).success(function(response) {
+        console.log(response);
+        $rootScope.$broadcast("LineService.success");
+        service.list = response;
+      }).error(function() {
+        console.log("error");
+        $rootScope.$broadcast("LineService.error");
+      });
     }
   };
   return service;
@@ -121,7 +136,7 @@ CTA.service("Tabs", function($rootScope, $location, $anchorScroll, LineService) 
       service.current = tab;
       $location.hash("top");
       $anchorScroll();
-      LineService.clear();
+      LineService.clearCurrent();
       if (!skipBroadcast) {
         $rootScope.$broadcast("Tabs." + tab);
       }
@@ -280,18 +295,21 @@ CTA.controller("TracksCtrl", function($scope, $http, Bus, Analytics, Tabs, LineS
   $scope.loadLines = function() {
     console.log("loadLines");
     Analytics.track("Tracks", "loadLines");
-    $scope.state = "loading-lines";
-    $http({
-      method: "GET", url: "/api/lines"
-    }).success(function(response) {
-      console.log(response);
-      $scope.state = "lines";
-      $scope.lines = response;
-    }).error(function() {
-      console.log("error");
-      $scope.state = "error";
-    });
+    LineService.load();
   }
+
+  $scope.$on("LineService.loading", function() {
+    $scope.state = "loading-lines";
+  });
+  $scope.$on("LineService.success", function() {
+    $scope.state = "lines";
+  });
+  $scope.$on("LineService.error", function() {
+    $scope.state = "error";
+  });
+  $scope.$watch(function(){ return LineService.list; }, function() {
+    $scope.lines = LineService.list;
+  });
 
   $scope.loadStations = function(line) {
     if (line) {
@@ -334,7 +352,7 @@ CTA.controller("TracksCtrl", function($scope, $http, Bus, Analytics, Tabs, LineS
   }
 
   $scope.setLine = function(line) {
-    LineService.set(line);
+    LineService.setCurrent(line);
     $scope.loadStations(line);
   };
 
