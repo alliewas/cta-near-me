@@ -4,7 +4,7 @@ window.CTA = angular.module("cta", []);
 
 // Bus
 
-CTA.factory("Bus", ["$rootScope", function($rootScope) {
+CTA.factory("Bus", function($rootScope) {
   return {
     broadcast: function(name, obj) {
       this.name = name;
@@ -15,11 +15,11 @@ CTA.factory("Bus", ["$rootScope", function($rootScope) {
       $rootScope.$broadcast(this.name);
     }
   };
-}]);
+});
 
 // Analytics
 
-CTA.service("Analytics", ["$rootScope", "$window", function($rootScope, $window) {
+CTA.service("Analytics", function($rootScope, $window) {
   var service = {
     track: function(category, action, label, value) {
       console.log("Track: ", category, action, label, value);
@@ -27,11 +27,11 @@ CTA.service("Analytics", ["$rootScope", "$window", function($rootScope, $window)
     }
   };
   return service;
-}]);
+});
 
 // Location
 
-CTA.service("Location", ["$rootScope", function($rootScope) {
+CTA.service("Location", function($rootScope) {
   var service = {
     latitude: null,
     longitude: null,
@@ -63,11 +63,11 @@ CTA.service("Location", ["$rootScope", function($rootScope) {
     }
   };
   return service;
-}]);
+});
 
 // Line
 
-CTA.service("Line", ["$rootScope", function($rootScope) {
+CTA.service("Line", function($rootScope) {
   var service = {
     current: null,
     set: function(line) {
@@ -79,11 +79,11 @@ CTA.service("Line", ["$rootScope", function($rootScope) {
     }
   };
   return service;
-}]);
+});
 
 // Station
 
-CTA.service("Station", ["$rootScope", function($rootScope) {
+CTA.service("Station", function($rootScope) {
   var service = {
     current: null,
     set: function(station) {
@@ -92,21 +92,21 @@ CTA.service("Station", ["$rootScope", function($rootScope) {
     }
   };
   return service;
-}]);
+});
 
 // Loading
 
-CTA.service("Loading", ["$rootScope", function($rootScope) {
+CTA.service("Loading", function($rootScope) {
   var service = {
     loading: false,
     loadable: false
   };
   return service;
-}]);
+});
 
 // Tabs
 
-CTA.service("Tabs", ["$rootScope", "$location", "$anchorScroll", "Line", function($rootScope, $location, $anchorScroll, Line) {
+CTA.service("Tabs", function($rootScope, $location, $anchorScroll, Line) {
   var service = {
     current: "nearby",
 
@@ -129,15 +129,15 @@ CTA.service("Tabs", ["$rootScope", "$location", "$anchorScroll", "Line", functio
     }
   };
   return service;
-}]);
+});
 
-CTA.controller("TabsCtrl", ["$scope", "Tabs", function($scope, Tabs) {
+CTA.controller("TabsCtrl", function($scope, Tabs) {
   $scope.Tabs = Tabs;
-}]);
+});
 
 // Header
 
-CTA.controller("HeaderCtrl", ["$scope", "Bus", "Tabs", function($scope, Bus, Tabs) {
+CTA.controller("HeaderCtrl", function($scope, Bus, Tabs) {
   console.log("HeaderCtrl");
 
   $scope.Tabs = Tabs;
@@ -149,7 +149,7 @@ CTA.controller("HeaderCtrl", ["$scope", "Bus", "Tabs", function($scope, Bus, Tab
   $scope.refreshPage = function() {
     location.reload(true);
   }
-}]);
+});
 
 CTA.directive("header", function() {
   return {
@@ -163,13 +163,13 @@ CTA.directive("header", function() {
 
 // Footer
 
-CTA.controller("FooterCtrl", ["$scope", "Bus", "Loading", function($scope, Bus, Loading) {
+CTA.controller("FooterCtrl", function($scope, Bus, Loading) {
   $scope.Loading = Loading;
 
   $scope.reload = function() {
     Bus.broadcast("reload");
   }
-}]);
+});
 
 CTA.directive("footer", function() {
   return {
@@ -183,7 +183,7 @@ CTA.directive("footer", function() {
 
 // Nearby
 
-CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Analytics", "Tabs", "Station", "Loading", "Location", function($scope, $http, Bus, Analytics, Tabs, Station, Loading, Location) {
+CTA.controller("NearbyCtrl", function($scope, $http, Bus, Analytics, Tabs, Station, Loading, Location) {
   console.log("NearbyCtrl");
 
   $scope.state = null; // loading-geo, no-geo, geo-error, loading-data, has-stations, empty-stations, error
@@ -257,7 +257,7 @@ CTA.controller("NearbyCtrl", ["$scope", "$http", "Bus", "Analytics", "Tabs", "St
   if (Tabs.nearby()) {
     $scope.getLocation();
   }
-}]);
+});
 
 CTA.directive("nearby", function() {
   return {
@@ -271,7 +271,7 @@ CTA.directive("nearby", function() {
 
 // Tracks
 
-CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Analytics", "Tabs", "Line", "Station", "Loading", "Location", function($scope, $http, Bus, Analytics, Tabs, Line, Station, Loading, Location) {
+CTA.controller("TracksCtrl", function($scope, $http, Bus, Analytics, Tabs, Line, Station, Loading, Location) {
   console.log("TracksCtrl");
 
   $scope.Line = Line;
@@ -365,7 +365,7 @@ CTA.controller("TracksCtrl", ["$scope", "$http", "Bus", "Analytics", "Tabs", "Li
   if (Tabs.tracks()) {
     $scope.loadLines();
   }
-}]);
+});
 
 CTA.directive("tracks", function() {
   return {
