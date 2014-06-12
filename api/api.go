@@ -45,7 +45,11 @@ func Station(w http.ResponseWriter, r *http.Request) {
 	lat, _ := strconv.ParseFloat(r.URL.Query().Get("latitude"), 64)
 	long, _ := strconv.ParseFloat(r.URL.Query().Get("longitude"), 64)
     station := station.GetStation(int(stationId), lat, long)
-    loadStationArrivals(station)
+
+    var wg sync.WaitGroup
+    loadStationArrivals(station, &wg)
+    wg.Wait()
+
     response, _ := json.Marshal(station)
     w.Write(response)
 }
@@ -58,13 +62,13 @@ func loadArrivals(stations []station.StationWrapper) {
     wg.Wait()
 }
 
-func loadStationArrivals(station station.StationWrapper, wg *sync.WaitGroup) {
-    log.Printf("loading station: %v", station.Name)
-    wg.Add(len(station.StopArrivals))
-    for _, stop := range station.StopArrivals {
-        go func(wg *sync.WaitGroup) {
+func loadStationArrivals(s station.StationWrapper, wg *sync.WaitGroup) {
+    log.Printf("loading station: %v", s.Name)
+    wg.Add(len(s.StopArrivals))
+    for _, stop := range s.StopArrivals {
+        go func(stop *station.StopWrapper, wg *sync.WaitGroup) {
             stop.Arrivals, _ = arrival.Load(stop.StopId)
             wg.Done()
-        }(&wg)
+        }(stop, wg)
     }
 }
