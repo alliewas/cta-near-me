@@ -8,7 +8,7 @@
       </button>
     </div>
     <div class="col-xs-5 text-right">
-      <div ng-repeat="line in lines()" ng-click="lineToggle(line)" class="toggle line-{{line}}" ng-class="{disabled: lineDisabled(line)}">
+      <div ng-repeat="line in lines()" ng-click="lineToggle(line)" class="toggle line-{{line}}" ng-class="{disabled: lineDisabled(line)}" ng-hide="loading">
         <div class="name">{{line}}</div>
       </div>
     </div>
