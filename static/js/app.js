@@ -213,17 +213,41 @@ CTA.controller("TabsCtrl", function($scope, Tabs) {
 
 // LineToggle
 
-CTA.service("LineToggle", function($rootScope) {
+CTA.service("LineToggle", function($rootScope, StationService) {
   var service = {
-    disabledLines: {},
+    whitelist: null,
+    blacklist: {},
     clear: function() {
-      service.disabledLines = {};
+      service.whitelist = null;
+      service.blacklist = {};
     },
     toggle: function(line) {
-      service.disabledLines[line] = !service.disabledLines[line];
+      if (service.whitelist) {
+        service.lines().forEach(function(l) {
+          if (l != service.whitelist) {
+            service.blacklist[l] = true;
+          }
+        });
+        service.blacklist[service.whitelist] = false;
+        service.whitelist = null;
+      }
+      service.blacklist[line] = !service.blacklist[line];
     },
     isDisabled: function(line) {
-      return service.disabledLines[line];
+      if (service.whitelist) {
+        return line != service.whitelist;
+      } else {
+        return service.blacklist[line];
+      }
+    },
+    lines: function() {
+      if (StationService.current) {
+        return StationService.current.lines();
+      } else if (StationService.list) {
+        return StationService.linesForList();
+      } else {
+        return [];
+      }
     }
   };
   return service;
@@ -257,7 +281,7 @@ CTA.directive("header", function() {
 
 // Footer
 
-CTA.controller("FooterCtrl", function($scope, Bus, Loading, StationService, LineToggle) {
+CTA.controller("FooterCtrl", function($scope, Bus, Loading, LineToggle) {
   $scope.$watch(function(){ return Loading.loadable; }, function(loadable) {
     $scope.loadable = loadable;
   });
@@ -270,13 +294,7 @@ CTA.controller("FooterCtrl", function($scope, Bus, Loading, StationService, Line
   }
 
   $scope.lines = function() {
-    if (StationService.current) {
-      return StationService.current.lines();
-    } else if (StationService.list) {
-      return StationService.linesForList();
-    } else {
-      return [];
-    }
+    return LineToggle.lines();
   }
 
   $scope.lineToggle = function(line) {
@@ -451,6 +469,7 @@ CTA.controller("TracksCtrl", function($scope, Bus, Analytics, Tabs, LineService,
 
   $scope.setLine = function(line) {
     LineService.current = line;
+    LineToggle.whitelist = line.Key;
     $scope.loadStations(line);
   };
 
