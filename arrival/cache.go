@@ -1,10 +1,12 @@
 package arrival
 
 import (
+    "sync"
     "time"
 )
 
 type TimedCache struct {
+    sync.RWMutex
     data map[int]timedCacheItem
 }
 
@@ -15,6 +17,8 @@ func NewTimedCache() TimedCache {
 }
 
 func (c TimedCache) Get(stopId int) (interface{}, bool) {
+    c.Lock()
+    defer c.Unlock()
     if t, ok := c.data[stopId]; ok && !t.isExpired() {
         return t.item, true
     }
@@ -22,6 +26,8 @@ func (c TimedCache) Get(stopId int) (interface{}, bool) {
 }
 
 func (c TimedCache) Set(stopId int, item interface{}) {
+    c.Lock()
+    defer c.Unlock()
     c.data[stopId] = timedCacheItem{time.Now(), item}
 }
 

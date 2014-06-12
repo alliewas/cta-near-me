@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
     "strconv"
+    "sync"
     "github.com/alliewas/cta-near-me/station"
     "github.com/alliewas/cta-near-me/arrival"
 )
@@ -50,14 +51,20 @@ func Station(w http.ResponseWriter, r *http.Request) {
 }
 
 func loadArrivals(stations []station.StationWrapper) {
+    var wg sync.WaitGroup
     for _, station := range stations {
-        loadStationArrivals(station)
+        loadStationArrivals(station, &wg)
     }
+    wg.Wait()
 }
 
-func loadStationArrivals(station station.StationWrapper) {
+func loadStationArrivals(station station.StationWrapper, wg *sync.WaitGroup) {
     log.Printf("loading station: %v", station.Name)
+    wg.Add(len(station.StopArrivals))
     for _, stop := range station.StopArrivals {
-        stop.Arrivals, _ = arrival.Load(stop.StopId)
+        go func(wg *sync.WaitGroup) {
+            stop.Arrivals, _ = arrival.Load(stop.StopId)
+            wg.Done()
+        }(&wg)
     }
 }
