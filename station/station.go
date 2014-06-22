@@ -69,7 +69,7 @@ func (s stationSorter) Less(i, j int) bool {
     return s.by(s.stations[i], s.stations[j])
 }
 
-func newSorter(nearbyStations []StationWrapper) stationSorter {
+func NewStationSorter(nearbyStations []StationWrapper) stationSorter {
     return stationSorter{
         nearbyStations,
         func(s1, s2 StationWrapper) bool {
@@ -113,7 +113,7 @@ func StationsForLine(lineKey string, latitude, longitude float64) []StationWrapp
 func StationsNear(latitude, longitude float64) []StationWrapper {
     point := geo.NewPoint(latitude, longitude)
     near := recurseStationsNear(point, 0.1, 5)
-    sorter := newSorter(near)
+    sorter := NewStationSorter(near)
     sort.Sort(sorter)
     return near
 }

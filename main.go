@@ -20,6 +20,7 @@ func main() {
     router.HandleFunc("/api/lines", api.Lines).Methods("GET")
     router.HandleFunc("/api/stations", api.Stations).Methods("GET")
     router.HandleFunc("/api/station", api.Station).Methods("GET")
+    router.HandleFunc("/api/stops", api.Stops).Methods("GET")
 
 	router.PathPrefix("/").Handler(http.FileServer(http.Dir(fmt.Sprintf("%s/static/", config.Get().Host.Path))))
 	http.Handle("/", router)

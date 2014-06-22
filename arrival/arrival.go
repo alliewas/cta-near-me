@@ -52,6 +52,7 @@ type ctatt struct {
 }
 
 type eta struct {
+    StationId int `xml:"staId"`
     StopId int `xml:"stpId"`
     IsApproaching bool `xml:"isApp"`
     IsScheduled bool `xml:"isSch"`
@@ -61,6 +62,7 @@ type eta struct {
 }
 
 type Eta struct {
+    StationId int
     StopId int
     IsApproaching bool
     IsScheduled bool
@@ -78,6 +80,7 @@ func etas(in []eta) []Eta {
         arrivingAt, _ := time.ParseInLocation(timeLayout, v.ArrivingAt, chicago)
         arrivingInMinutes := arrivingAt.Sub(time.Now()) / time.Minute
         out[i] = Eta{
+            v.StationId,
             v.StopId,
             v.IsApproaching,
             v.IsScheduled,

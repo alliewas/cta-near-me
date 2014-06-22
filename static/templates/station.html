@@ -7,9 +7,14 @@
     <span class="number distance">{{station.Kilometers | kmToMiles | number: 2}}</span> mi
   </div>
   <div class="clearfix"></div>
-  <div ng-repeat="stop in station.StopArrivals" ng-hide="isLineDisabled(stop.LineKey)">
-    <div class="stop line-{{stop.LineKey}}">
-      {{stop.Name}}
+  <div ng-repeat="stop in station.StopArrivals" ng-hide="isStopHidden(stop)">
+    <div class="row stop line-{{stop.LineKey}}">
+      <div class="col-xs-8 text-left">
+        {{stop.Name}}
+      </div>
+      <div class="col-xs-4 text-right">
+        <a href="#" ng-click="toggleFavorite(stop)" class="favorite-toggle glyphicon" ng-class="{'glyphicon-star': isFavorite(stop), 'glyphicon-star-empty': !isFavorite(stop)}"></a>
+      </div>
     </div>
     <div class="row no-margin">
       <div ng-repeat="arrival in stop.Arrivals.slice(0, 3)" class="col-xs-4 arrival">

@@ -81,6 +81,9 @@ CTA.service("LineService", function($rootScope, $http) {
       });
     }
   };
+  $rootScope.$on("Tabs.change", function() {
+    service.clearCurrent();
+  });
   return service;
 });
 
@@ -165,6 +168,9 @@ CTA.service("StationService", function($rootScope, $http, Location, Station) {
       })));
     }
   };
+  $rootScope.$on("Tabs.change", function() {
+    service.clearCurrent();
+  });
   return service;
 });
 
@@ -180,7 +186,7 @@ CTA.service("Loading", function($rootScope) {
 
 // Tabs
 
-CTA.service("Tabs", function($rootScope, $location, $anchorScroll, LineService, StationService, LineToggle) {
+CTA.service("Tabs", function($rootScope, $location, $anchorScroll) {
   var service = {
     current: "nearby",
 
@@ -192,15 +198,17 @@ CTA.service("Tabs", function($rootScope, $location, $anchorScroll, LineService, 
       return service.current == "tracks";
     },
 
+    favorites: function() {
+      return service.current == "favorites";
+    },
+
     set: function(tab, skipBroadcast) {
       service.current = tab;
       $location.hash("top");
       $anchorScroll();
-      LineService.clearCurrent();
-      StationService.clearCurrent();
-      LineToggle.clear();
+      $rootScope.$broadcast("Tabs.change");
       if (!skipBroadcast) {
-        $rootScope.$broadcast("Tabs." + tab);
+        $rootScope.$broadcast("Tabs.to." + tab);
       }
     }
   };
@@ -213,7 +221,7 @@ CTA.controller("TabsCtrl", function($scope, Tabs) {
 
 // LineToggle
 
-CTA.service("LineToggle", function($rootScope, StationService) {
+CTA.service("LineToggle", function($rootScope, Tabs, StationService, FavoritesService) {
   var service = {
     whitelist: null,
     blacklist: {},
@@ -241,15 +249,22 @@ CTA.service("LineToggle", function($rootScope, StationService) {
       }
     },
     lines: function() {
-      if (StationService.current) {
-        return StationService.current.lines();
-      } else if (StationService.list) {
-        return StationService.linesForList();
+      if (Tabs.favorites()) {
+        return FavoritesService.linesForList();
       } else {
-        return [];
+        if (StationService.current) {
+          return StationService.current.lines();
+        } else if (StationService.list) {
+          return StationService.linesForList();
+        } else {
+          return [];
+        }
       }
     }
   };
+  $rootScope.$on("Tabs.change", function() {
+    service.clear();
+  });
   return service;
 });
 
@@ -318,7 +333,7 @@ CTA.directive("footer", function() {
 
 // Nearby
 
-CTA.controller("NearbyCtrl", function($scope, Bus, Analytics, Tabs, StationService, Loading, Location, LineToggle) {
+CTA.controller("NearbyCtrl", function($scope, Bus, Analytics, Tabs, StationService, Loading, Location, LineToggle, FavoritesService) {
   console.log("NearbyCtrl");
 
   $scope.state = null; // loading-geo, no-geo, geo-error, loading-data, has-stations, empty-stations, error
@@ -364,8 +379,8 @@ CTA.controller("NearbyCtrl", function($scope, Bus, Analytics, Tabs, StationServi
     }
   });
 
-  $scope.isLineDisabled = function(line) {
-    return LineToggle.isDisabled(line);
+  $scope.isStopHidden = function(stop) {
+    return LineToggle.isDisabled(stop.LineKey);
   }
 
   $scope.gotoStation = function(station) {
@@ -374,13 +389,22 @@ CTA.controller("NearbyCtrl", function($scope, Bus, Analytics, Tabs, StationServi
     StationService.loadStation(station);
   }
 
+  $scope.toggleFavorite = function(stop) {
+    console.log("toggle favorite", stop);
+    FavoritesService.toggle(stop);
+  };
+
+  $scope.isFavorite = function(stop) {
+    return FavoritesService.isFavorite(stop);
+  };
+
   $scope.$on("reload", function() {
     if (Tabs.nearby()) {
       $scope.getLocation();
     }
   });
 
-  $scope.$on("Tabs.nearby", function() {
+  $scope.$on("Tabs.to.nearby", function() {
     $scope.getLocation();
   });
 
@@ -406,7 +430,7 @@ CTA.directive("nearby", function() {
 
 // Tracks
 
-CTA.controller("TracksCtrl", function($scope, Bus, Analytics, Tabs, LineService, StationService, Loading, Location, LineToggle) {
+CTA.controller("TracksCtrl", function($scope, Bus, Analytics, Tabs, LineService, StationService, Loading, Location, LineToggle, FavoritesService) {
   console.log("TracksCtrl");
 
   $scope.state = null; // loading-lines, lines, loading-stations, stations, loading-station, station, error
@@ -486,8 +510,17 @@ CTA.controller("TracksCtrl", function($scope, Bus, Analytics, Tabs, LineService,
     $scope.station = current;
   });
 
-  $scope.isLineDisabled = function(line) {
-    return LineToggle.isDisabled(line);
+  $scope.toggleFavorite = function(stop) {
+    console.log("toggle favorite", stop);
+    FavoritesService.toggle(stop);
+  };
+
+  $scope.isFavorite = function(stop) {
+    return FavoritesService.isFavorite(stop);
+  };
+
+  $scope.isStopHidden = function(stop) {
+    return LineToggle.isDisabled(stop.LineKey);
   }
 
   $scope.$on("reload", function() {
@@ -500,7 +533,7 @@ CTA.controller("TracksCtrl", function($scope, Bus, Analytics, Tabs, LineService,
     }
   });
 
-  $scope.$on("Tabs.tracks", function() {
+  $scope.$on("Tabs.to.tracks", function() {
     $scope.loadLines();
   });
 
@@ -523,6 +556,163 @@ CTA.directive("tracks", function() {
     templateUrl: "/templates/tracks.html"
   };
 });
+
+// Favorites
+
+CTA.service("FavoritesService", function($rootScope, $http, Location, Station, StationService) {
+  var service = {
+    stops: {},
+    isFavorite: function(stop) {
+      if (service.stops[stop.LineKey]) {
+        return service.stops[stop.LineKey][stop.StopId];
+      } else {
+        return false;
+      }
+    },
+    toggle: function(stop) {
+      if (service.isFavorite(stop)) {
+        service.remove(stop);
+      } else {
+        service.add(stop);
+      }
+    },
+    add: function(stop) {
+      if (!service.isFavorite(stop)) {
+        if (!service.stops[stop.LineKey]) {
+          service.stops[stop.LineKey] = {};
+        }
+        service.stops[stop.LineKey][stop.StopId] = true;
+        service.saveLocal();
+      }
+    },
+    remove: function(stop) {
+      if (service.isFavorite(stop)) {
+        if (service.stops[stop.LineKey]) {
+          delete service.stops[stop.LineKey][stop.StopId];
+        }
+        service.saveLocal();
+      }
+    },
+    pairs: function() {
+      var list = [];
+      for (var lineKey in service.stops) {
+        for (var stopId in service.stops[lineKey]) {
+          list.push({ StopId: stopId, LineKey: lineKey });
+        }
+      }
+      return list;
+    },
+    linesForList: function() {
+      return $.unique(service.pairs().map(function(p) {
+        return p.LineKey;
+      }));
+    },
+    fetchLocal: function() {
+      if (localStorage.favoriteStops) {
+        service.stops = JSON.parse(localStorage.favoriteStops);
+      } else {
+        service.stops = {};
+      }
+    },
+    saveLocal: function() {
+      localStorage.favoriteStops = JSON.stringify(service.stops);
+    },
+    stations: [],
+    load: function() {
+      if (service.stops) {
+        var pairs = service.pairs();
+        $rootScope.$broadcast("FavoritesService.loading");
+        $http({
+          method: "GET", url: "/api/stops", params: {
+            stopIds: pairs.map(function(s) {
+              return s.StopId;
+            }).join(","),
+            lineKeys: pairs.map(function(s) {
+              return s.LineKey;
+            }).join(","),
+            latitude: Location.latitude,
+            longitude: Location.longitude
+          }
+        }).success(function(response) {
+          console.log(response);
+          $rootScope.$broadcast("FavoritesService.success");
+          service.stations = response.map(function(s){ return new Station(s); });
+        }).error(function() {
+          $rootScope.$broadcast("FavoritesService.error");
+        });
+      }
+    }
+  };
+  service.fetchLocal();
+  return service;
+});
+
+CTA.controller("FavoritesCtrl", function($scope, Bus, Tabs, Loading, LineToggle, FavoritesService, StationService) {
+  $scope.load = function() {
+    FavoritesService.load();
+  };
+
+  $scope.$on("FavoritesService.loading", function() {
+    $scope.state = "loading";
+  });
+  $scope.$on("FavoritesService.error", function() {
+    $scope.state = "error";
+  });
+  $scope.$watch(function(){ return FavoritesService.stations; }, function(stations) {
+    $scope.stations = stations;
+    if (stations) {
+      if (stations.length > 0) {
+        $scope.state = "favorites";
+      } else {
+        $scope.state = "no-favorites";
+      }
+    }
+  });
+
+  $scope.$on("Tabs.to.favorites", function() {
+    $scope.load();
+  });
+
+  $scope.$on("reload", function() {
+    if (Tabs.favorites()) {
+      $scope.load();
+    }
+  });
+
+  $scope.toggleFavorite = function(stop) {
+    console.log("toggle favorite", stop);
+    FavoritesService.toggle(stop);
+  };
+
+  $scope.isFavorite = function(stop) {
+    return FavoritesService.isFavorite(stop);
+  };
+
+  $scope.isStopHidden = function(stop) {
+    return !FavoritesService.isFavorite(stop) || LineToggle.isDisabled(stop.LineKey);
+  }
+
+  $scope.$watch("state", function() {
+    Loading.loadable = true;
+    Loading.loading = ("loading" == $scope.state);
+  });
+
+  if (Tabs.favorites()) {
+    $scope.load();
+  }
+});
+
+CTA.directive("favorites", function() {
+  return {
+    restrict: "E",
+    transclude: true,
+    scope: {},
+    controller: "FavoritesCtrl",
+    templateUrl: "/templates/favorites.html"
+  };
+});
+
+// Other
 
 CTA.directive("station", function() {
   return {
