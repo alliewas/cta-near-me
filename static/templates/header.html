@@ -4,9 +4,9 @@
       <a class="navbar-brand" href="#" ng-click="refreshPage()">ctanear.me</a>
     </div>
     <ul class="nav nav-pills pull-right">
-      <li ng-class="{active: Tabs.nearby()}"><a href="#" ng-click="Tabs.set('nearby')" class="glyphicon glyphicon-map-marker"></a></li>
-      <li ng-class="{active: Tabs.tracks()}"><a href="#" ng-click="Tabs.set('tracks')" class="glyphicon glyphicon-list"></a></li>
-      <li ng-class="{active: Tabs.favorites()}"><a href="#" ng-click="Tabs.set('favorites')" class="glyphicon glyphicon-star"></a></li>
+      <li ng-class="{active: show('nearby')}"><a href="#" ng-click="goto('nearby')" class="glyphicon glyphicon-map-marker"></a></li>
+      <li ng-class="{active: show('lines')}"><a href="#" ng-click="goto('lines')" class="glyphicon glyphicon-list"></a></li>
+      <li ng-class="{active: show('favorites')}"><a href="#" ng-click="goto('favorites')" class="glyphicon glyphicon-star"></a></li>
     </ul>
   </div>
 </div>
