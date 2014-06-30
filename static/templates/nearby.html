@@ -1,28 +1,23 @@
-<div ng-switch on="$state.nearby">
-  <div ng-switch-when="loading-geo">
-    <spinner message="Getting Location"></spinner>
+<div ng-show="substate('loading-geo')">
+  <spinner message="Getting Location"></spinner>
+</div>
+<div ng-show="substate('loading-data')">
+  <spinner message="Loading Stations"></spinner>
+</div>
+<div ng-show="substate('has-stations')">
+  <div ng-repeat="station in stations">
+    <station station="station"></station>
   </div>
-  <div ng-switch-when="loading-data">
-    <spinner message="Loading Stations"></spinner>
-  </div>
-  <div ng-switch-when="has-stations">
-    <div ng-repeat="station in stations">
-      <station station="station"></station>
-    </div>
-  </div>
-  <div ng-switch-when="empty-stations">
-    <p>there are no stations near you</p>
-  </div>
-  <div ng-switch-when="error">
-    <p>there was an error</p>
-  </div>
-  <div ng-switch-when="no-geo">
-    <p>no location access</p>
-  </div>
-  <div ng-switch-when="geo-error">
-    <p>failed to get location</p>
-  </div>
-  <div ng-switch-default>
-    <p>???</p>
-  </div>
+</div>
+<div ng-show="substate('empty-stations')">
+  <p>there are no stations near you</p>
+</div>
+<div ng-show="substate('error')">
+  <p>there was an error</p>
+</div>
+<div ng-show="substate('no-geo')">
+  <p>no location access</p>
+</div>
+<div ng-show="substate('geo-error')">
+  <p>failed to get location</p>
 </div>

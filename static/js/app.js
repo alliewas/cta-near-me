@@ -9,11 +9,12 @@ CTA.service("$state", function() {
   return {};
 });
 
-CTA.service("$statechart", function($state, $rootScope, $location, $anchorScroll, Location) {
+CTA.service("$statechart", function($state, $rootScope, $location, $anchorScroll, Location, LineService, FavoritesService) {
   var scrollUp = function() {
     $location.hash("top");
     $anchorScroll();
   }
+
   return State.define(function() {
     this.trace = true;
 
@@ -21,8 +22,14 @@ CTA.service("$statechart", function($state, $rootScope, $location, $anchorScroll
       this.enter(function() {
         scrollUp();
         $state.show = "nearby";
-        //$rootScope.$broadcast("Tabs.to.nearby");
-        console.log("entered nearby");
+        $state.loadable = true;
+        $state.toggleable = true;
+        this.send("getLocation");
+      });
+      this.exit(function() {
+        $rootScope.$broadcast("Tabs.change");
+        $state.loadable = false;
+        $state.toggleable = false;
       });
 
       this.event("getLocation", function() {
@@ -34,80 +41,112 @@ CTA.service("$statechart", function($state, $rootScope, $location, $anchorScroll
         }
       });
 
-      this.event("locationSuccess", function() {
-        console.log("location success!!");
-      });
-      
-      this.event("locationError", function() {
-        this.goto("geo-error");
-      });
-
       this.state("loading-geo", function() {
         this.enter(function() {
-          $state.nearby = "loading-geo";
+          $state.loading = true;
+        });
+        this.exit(function() {
+          $state.loading = false;
         });
       });
       this.state("no-geo", function() {
-        this.enter(function() {
-          $state.nearby = "no-geo";
-        });
       });
       this.state("geo-error", function() {
-        this.enter(function() {
-          $state.nearby = "geo-error";
-        });
       });
       this.state("loading-data", function() {
         this.enter(function() {
-          $state.nearby = "loading-data";
+          $state.loading = true;
+        });
+        this.exit(function() {
+          $state.loading = false;
         });
       });
       this.state("has-stations", function() {
-        this.enter(function() {
-          $state.nearby = "has-stations";
-        });
       });
       this.state("empty-stations", function() {
+      });
+      this.state("error", function() {
+      });
+    });
+    this.state("tracks", function() {
+      this.enter(function() {
+        console.log("entering lines");
+        scrollUp();
+        $state.show = "tracks";
+        $state.toggleable = true;
+        this.send("loadLines");
+      });
+      this.exit(function() {
+        $state.toggleable = false;
+        $rootScope.$broadcast("Tabs.change");
+      });
+
+      this.event("loadLines", function() {
+        LineService.load();
+      });
+
+      this.state("loading-lines", function() {
+      });
+      this.state("lines", function() {
+      });
+      this.state("loading-stations", function() {
+      });
+      this.state("stations", function() {
+      });
+      this.state("loading-station", function() {
         this.enter(function() {
-          $state.nearby = "empty-stations";
+          $state.loadable = true;
+          $state.loading = true;
+        });
+        this.exit(function() {
+          $state.loadable = false;
+          $state.loading = false;
+        });
+      });
+      this.state("station", function() {
+        this.enter(function() {
+          $state.loadable = true;
+        });
+        this.exit(function() {
+          $state.loadable = false;
         });
       });
       this.state("error", function() {
-        this.enter(function() {
-          $state.nearby = "error";
-        });
-      });
-    });
-    this.state("lines", function() {
-      this.enter(function() {
-        scrollUp();
-        $state.show = "lines";
-        $rootScope.$broadcast("Tabs.to.lines");
       });
     });
     this.state("favorites", function() {
       this.enter(function() {
         scrollUp();
         $state.show = "favorites";
-        $rootScope.$broadcast("Tabs.to.favorites");
+        $state.loadable = true;
+        $state.toggleable = false;
+        this.send("loadFavorites");
+      });
+      this.exit(function() {
+        $state.loadable = false;
+        $rootScope.$broadcast("Tabs.change");
+      });
+
+      this.event("loadFavorites", function() {
+        FavoritesService.load();
+      });
+
+      this.state("loading", function() {
+        this.enter(function() {
+          $state.loading = true;
+        })
+        this.exit(function() {
+          $state.loading = false;
+        });
+      });
+      this.state("error", function() {
+      });
+      this.state("favorites", function() {
+      });
+      this.state("no-favorites", function() {
       });
     });
   });
-});
-
-// Bus
-
-CTA.factory("Bus", function($rootScope) {
-  return {
-    broadcast: function(name, obj) {
-      this.name = name;
-      this.obj = obj;
-      this.broadcastItem();
-    },
-    broadcastItem: function() {
-      $rootScope.$broadcast(this.name);
-    }
-  };
 });
 
 // Analytics
@@ -124,7 +163,7 @@ CTA.service("Analytics", function($rootScope, $window) {
 
 // Location
 
-CTA.service("Location", function($rootScope, $statechart) {
+CTA.service("Location", function($rootScope) {
   var service = {
     latitude: null,
     longitude: null,
@@ -138,15 +177,14 @@ CTA.service("Location", function($rootScope, $statechart) {
     },
 
     success: function(position) {
+      console.log("geo success");
       service.latitude = position.coords.latitude;
       service.longitude = position.coords.longitude;
-      $statechart.locationSuccess();
-      //$rootScope.$broadcast("Location.success");
+      $rootScope.$broadcast("Location.success");
     },
 
     error: function(msg) {
-      $statechart.locationError();
-      //$rootScope.$broadcast("Location.error");
+      $rootScope.$broadcast("Location.error");
     }
   };
   return service;
@@ -176,9 +214,9 @@ CTA.service("LineService", function($rootScope, $http) {
       });
     }
   };
-  //$rootScope.$on("Tabs.change", function() {
-  //  service.clearCurrent();
-  //});
+  $rootScope.$on("Tabs.change", function() {
+    service.clearCurrent();
+  });
   return service;
 });
 
@@ -199,8 +237,9 @@ CTA.factory("Station", function() {
 CTA.service("StationService", function($rootScope, $http, Location, Station) {
   var service = {
     current: null,
-    clearCurrent: function() {
+    clear: function() {
       service.current = null;
+      service.list = null;
     },
     loadStation: function(station) {
       if (station) {
@@ -263,9 +302,9 @@ CTA.service("StationService", function($rootScope, $http, Location, Station) {
       })));
     }
   };
-  //$rootScope.$on("Tabs.change", function() {
-  //  service.clearCurrent();
-  //});
+  $rootScope.$on("Tabs.change", function() {
+    service.clear();
+  });
   return service;
 });
 
@@ -278,44 +317,6 @@ CTA.service("Loading", function($rootScope) {
   };
   return service;
 });
-
-// Tabs
-
-/*
-CTA.service("Tabs", function($rootScope, $location, $anchorScroll) {
-  var service = {
-    current: "nearby",
-
-    nearby: function() {
-      return service.current == "nearby";
-    },
-
-    tracks: function() {
-      return service.current == "tracks";
-    },
-
-    favorites: function() {
-      return service.current == "favorites";
-    },
-
-    set: function(tab, skipBroadcast) {
-      service.current = tab;
-      $location.hash("top");
-      $anchorScroll();
-      $rootScope.$broadcast("Tabs.change");
-      if (!skipBroadcast) {
-        $rootScope.$broadcast("Tabs.to." + tab);
-      }
-    }
-  };
-  return service;
-});
-
-CTA.controller("TabsCtrl", function($scope, $state, $statechart) {
-  console.log("TabsCtrl");
-  $scope.$state = $state;
-});
-*/
 
 // LineToggle
 
@@ -347,28 +348,24 @@ CTA.service("LineToggle", function($rootScope, StationService, FavoritesService)
       }
     },
     lines: function() {
-      //if (Tabs.favorites()) {
-      //  return FavoritesService.linesForList();
-      //} else {
-        if (StationService.current) {
-          return StationService.current.lines();
-        } else if (StationService.list) {
-          return StationService.linesForList();
-        } else {
-          return [];
-        }
-      //}
+      if (StationService.current) {
+        return StationService.current.lines();
+      } else if (StationService.list) {
+        return StationService.linesForList();
+      } else {
+        return [];
+      }
     }
   };
-  //$rootScope.$on("Tabs.change", function() {
-  //  service.clear();
-  //});
+  $rootScope.$on("Tabs.change", function() {
+    service.clear();
+  });
   return service;
 });
 
 // Header
 
-CTA.controller("HeaderCtrl", function($scope, Bus, $state, $statechart) {
+CTA.controller("HeaderCtrl", function($scope, $rootScope, $state, $statechart) {
   console.log("HeaderCtrl");
   $scope.$state = $state;
 
@@ -381,7 +378,7 @@ CTA.controller("HeaderCtrl", function($scope, Bus, $state, $statechart) {
   }
 
   $scope.reload = function() {
-    Bus.broadcast("reload");
+    $rootScope.$broadcast("reload");
   }
 
   $scope.refreshPage = function() {
@@ -401,18 +398,17 @@ CTA.directive("header", function() {
 
 // Footer
 
-CTA.controller("FooterCtrl", function($scope, Bus, Loading, LineToggle, $state) {
+CTA.controller("FooterCtrl", function($scope, $rootScope, Loading, LineToggle, $state) {
   $scope.$state = $state;
 
-  $scope.$watch(function(){ return Loading.loadable; }, function(loadable) {
-    $scope.loadable = loadable;
-  });
-  $scope.$watch(function(){ return Loading.loading; }, function(loading) {
-    $scope.loading = loading;
-  });
-
   $scope.reload = function() {
-    Bus.broadcast("reload");
+    $rootScope.$broadcast("reload");
+  }
+
+  $scope.showToggle = function() {
+    console.log("toggleable", $state.toggleable, "!loading", !$state.loading);
+    console.log(LineToggle.lines());
+    return $state.toggleable && !$state.loading && (LineToggle.lines().length > 1);
   }
 
   $scope.lines = function() {
@@ -440,50 +436,35 @@ CTA.directive("footer", function() {
 
 // Nearby
 
-CTA.controller("NearbyCtrl", function($scope, $state, Bus, Analytics, StationService, Loading, Location, LineToggle, FavoritesService) {
+CTA.controller("NearbyCtrl", function($scope, $state, $statechart, Analytics, StationService, Loading, Location, LineToggle, FavoritesService) {
   console.log("NearbyCtrl");
 
   $scope.$state = $state;
 
-  $scope.state = null; // loading-geo, no-geo, geo-error, loading-data, has-stations, empty-stations, error
-
-  $scope.getLocation = function() {
-    Analytics.track("Nearby", "getLocation");
-    if (Location.available()) {
-      $scope.state = "loading-geo";
-      Location.get();
-    } else {
-      $scope.state = "no-geo";
-    }
-  }
-
   $scope.$on("Location.success", function() {
-    console.log("got coords");
-    $scope.load();
+    StationService.loadNearby();
   });
   $scope.$on("Location.error", function() {
-    console.log(msg);
-    Analytics.track("Nearby", "geoError", msg);
-    $scope.state = "geo-error";
+    $statechart.goto("/nearby/geo-error");
   });
 
-  $scope.load = function() {
-    StationService.loadNearby();
+  $scope.substate = function(name) {
+    return $statechart.isCurrent("/nearby/" + name);
   }
 
   $scope.$on("StationService.nearby.loading", function() {
-    $scope.state = "loading-data";
+    $statechart.goto("/nearby/loading-data");
   });
   $scope.$on("StationService.nearby.error", function() {
-    $scope.state = "error";
+    $statechart.goto("/nearby/error");
   });
   $scope.$watch(function(){ return StationService.list; }, function(stations) {
     $scope.stations = stations;
     if (stations) {
       if (stations.length > 0) {
-        $scope.state = "has-stations";
+        $statechart.goto("/nearby/has-stations");
       } else {
-        $scope.state = "empty-stations";
+        $statechart.goto("/nearby/empty-stations");
       }
     }
   });
@@ -494,7 +475,7 @@ CTA.controller("NearbyCtrl", function($scope, $state, Bus, Analytics, StationSer
 
   $scope.gotoStation = function(station) {
     console.log("Nearby.gotoStation");
-    //Tabs.set("tracks", true);
+    $statechart.goto("/tracks/loading-station");
     StationService.current = station;
     StationService.loadStation(station);
   }
@@ -509,23 +490,10 @@ CTA.controller("NearbyCtrl", function($scope, $state, Bus, Analytics, StationSer
   };
 
   $scope.$on("reload", function() {
-    //if (Tabs.nearby()) {
-    //  $scope.getLocation();
-    //}
+    if ($statechart.isCurrent("/nearby")) {
+      $statechart.send("getLocation");
+    }
   });
-
-  $scope.$on("Tabs.to.nearby", function() {
-    $scope.getLocation();
-  });
-
-  $scope.$watch("state", function() {
-    Loading.loadable = true;
-    Loading.loading = (["loading-geo", "loading-data"].indexOf($scope.state) != -1);
-  });
-
-  //if (Tabs.nearby()) {
-  //  $scope.getLocation();
-  //}
 });
 
 CTA.directive("nearby", function() {
@@ -540,25 +508,26 @@ CTA.directive("nearby", function() {
 
 // Tracks
 
-CTA.controller("TracksCtrl", function($scope, Bus, Analytics, LineService, StationService, Loading, Location, LineToggle, FavoritesService) {
+CTA.controller("TracksCtrl", function($scope, $state, $statechart, Analytics, LineService, StationService, Loading, Location, LineToggle, FavoritesService) {
   console.log("TracksCtrl");
 
-  $scope.state = null; // loading-lines, lines, loading-stations, stations, loading-station, station, error
+  $scope.$state = $state;
+  $scope.substate = function(name) {
+    return $statechart.isCurrent("/tracks/" + name);
+  }
 
   $scope.loadLines = function() {
-    console.log("loadLines");
-    Analytics.track("Tracks", "loadLines");
-    LineService.load();
+    $statechart.send("loadLines");
   }
 
   $scope.$on("LineService.loading", function() {
-    $scope.state = "loading-lines";
+    $statechart.goto("/tracks/loading-lines");
   });
   $scope.$on("LineService.success", function() {
-    $scope.state = "lines";
+    $statechart.goto("/tracks/lines");
   });
   $scope.$on("LineService.error", function() {
-    $scope.state = "error";
+    $statechart.goto("/tracks/error");
   });
   $scope.$watch(function(){ return LineService.list; }, function(lines) {
     $scope.lines = lines;
@@ -572,13 +541,13 @@ CTA.controller("TracksCtrl", function($scope, Bus, Analytics, LineService, Stati
   }
 
   $scope.$on("StationService.list.loading", function() {
-    $scope.state = "loading-stations";
+    $statechart.goto("/tracks/loading-stations");
   });
   $scope.$on("StationService.list.success", function() {
-    $scope.state = "stations";
+    $statechart.goto("/tracks/stations");
   });
   $scope.$on("StationService.list.error", function() {
-    $scope.state = "error";
+    $statechart.goto("/tracks/error");
   });
   $scope.$watch(function(){ return StationService.list; }, function(stations) {
     $scope.stations = stations;
@@ -592,13 +561,13 @@ CTA.controller("TracksCtrl", function($scope, Bus, Analytics, LineService, Stati
   }
 
   $scope.$on("StationService.current.loading", function() {
-    $scope.state = "loading-station";
+    $statechart.goto("/tracks/loading-station");
   });
   $scope.$on("StationService.current.success", function() {
-    $scope.state = "station";
+    $statechart.goto("/tracks/station");
   });
   $scope.$on("StationService.current.error", function() {
-    $scope.state = "error";
+    $statechart.goto("/tracks/error");
   });
 
   $scope.setLine = function(line) {
@@ -634,27 +603,10 @@ CTA.controller("TracksCtrl", function($scope, Bus, Analytics, LineService, Stati
   }
 
   $scope.$on("reload", function() {
-    //if (Tabs.tracks()) {
-    //  switch($scope.state) {
-    //    case "station":
-    //      $scope.loadStation(StationService.current);
-    //      break;
-    //  }
-    //}
+    if ($statechart.isCurrent("/tracks/station")) {
+      $scope.loadStation(StationService.current);
+    }
   });
-
-  //$scope.$on("Tabs.to.tracks", function() {
-  //  $scope.loadLines();
-  //});
-
-  $scope.$watch("state", function() {
-    Loading.loadable = (["station", "loading-station", "error"].indexOf($scope.state) != -1);
-    Loading.loading = (["loading-lines", "loading-stations", "loading-station"].indexOf($scope.state) != -1);
-  });
-
-  //if (Tabs.tracks()) {
-  //  $scope.loadLines();
-  //}
 });
 
 CTA.directive("tracks", function() {
@@ -757,36 +709,35 @@ CTA.service("FavoritesService", function($rootScope, $http, Location, Station, S
   return service;
 });
 
-CTA.controller("FavoritesCtrl", function($scope, Bus, Loading, LineToggle, FavoritesService, StationService) {
+CTA.controller("FavoritesCtrl", function($scope, $state, $statechart, Loading, LineToggle, FavoritesService, StationService) {
+  $scope.substate = function(name) {
+    return $statechart.isCurrent("/favorites/" + name);
+  }
   $scope.load = function() {
     FavoritesService.load();
   };
 
   $scope.$on("FavoritesService.loading", function() {
-    $scope.state = "loading";
+    $statechart.goto("/favorites/loading");
   });
   $scope.$on("FavoritesService.error", function() {
-    $scope.state = "error";
+    $statechart.goto("/favorites/error");
   });
   $scope.$watch(function(){ return FavoritesService.stations; }, function(stations) {
     $scope.stations = stations;
     if (stations) {
       if (stations.length > 0) {
-        $scope.state = "favorites";
+        $statechart.goto("/favorites/favorites");
       } else {
-        $scope.state = "no-favorites";
+        $statechart.goto("/favorites/no-favorites");
       }
     }
   });
 
-  //$scope.$on("Tabs.to.favorites", function() {
-  //  $scope.load();
-  //});
-
   $scope.$on("reload", function() {
-    //if (Tabs.favorites()) {
-    //  $scope.load();
-    //}
+    if ($statechart.isCurrent("/favorites")) {
+      $scope.load();
+    }
   });
 
   $scope.toggleFavorite = function(stop) {
@@ -806,10 +757,6 @@ CTA.controller("FavoritesCtrl", function($scope, Bus, Loading, LineToggle, Favor
     Loading.loadable = true;
     Loading.loading = ("loading" == $scope.state);
   });
-
-  //if (Tabs.favorites()) {
-  //  $scope.load();
-  //}
 });
 
 CTA.directive("favorites", function() {
@@ -847,12 +794,6 @@ CTA.filter("kmToMiles", function() {
   }
 });
 
-// Run
-
-//CTA.run(function($statechart) {
-//  $statechart.goto();
-//});
-
 // Main
 
 CTA.controller("MainCtrl", function($scope, $state, $statechart) {
@@ -870,4 +811,3 @@ CTA.directive("main", function() {
     templateUrl: "/templates/main.html"
   };
 });
-

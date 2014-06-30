@@ -1,21 +1,14 @@
-<div>
-  <div ng-switch on="state">
-    <div ng-switch-when="loading">
-      <spinner message="Loading Favorites"></spinner>
-    </div>
-    <div ng-switch-when="favorites">
-      <div ng-repeat="station in stations">
-        <station station="station"></station>
-      </div>
-    </div>
-    <div ng-switch-when="no-favorites">
-      <p>You have no favorites</p>
-    </div>
-    <div ng-switch-when="error">
-      <p>there was an error</p>
-    </div>
-    <div ng-switch-default>
-      <p>Favorites???</p>
-    </div>
+<div ng-show="substate('loading')">
+  <spinner message="Loading Favorites"></spinner>
+</div>
+<div ng-show="substate('favorites')">
+  <div ng-repeat="station in stations">
+    <station station="station"></station>
   </div>
+</div>
+<div ng-show="substate('no-favorites')">
+  <p>You have no favorites</p>
+</div>
+<div ng-show="substate('error')">
+  <p>there was an error</p>
 </div>
