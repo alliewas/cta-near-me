@@ -11,7 +11,6 @@ CTA.service("$state", function() {
 
 CTA.service("$statechart", function($state, $rootScope, $location, $anchorScroll, Location, LineService, FavoritesService) {
   var scrollUp = function() {
-    $location.hash("top");
     $anchorScroll();
   }
 
@@ -70,7 +69,6 @@ CTA.service("$statechart", function($state, $rootScope, $location, $anchorScroll
     });
     this.state("tracks", function() {
       this.enter(function() {
-        console.log("entering lines");
         scrollUp();
         $state.show = "tracks";
         $state.toggleable = true;
@@ -177,7 +175,6 @@ CTA.service("Location", function($rootScope) {
     },
 
     success: function(position) {
-      console.log("geo success");
       service.latitude = position.coords.latitude;
       service.longitude = position.coords.longitude;
       $rootScope.$broadcast("Location.success");
@@ -200,7 +197,6 @@ CTA.service("LineService", function($rootScope, $http) {
     },
     list: [],
     load: function() {
-      console.log("LineService.load");
       $rootScope.$broadcast("LineService.loading");
       $http({
         method: "GET", url: "/api/lines"
@@ -406,8 +402,6 @@ CTA.controller("FooterCtrl", function($scope, $rootScope, Loading, LineToggle, $
   }
 
   $scope.showToggle = function() {
-    console.log("toggleable", $state.toggleable, "!loading", !$state.loading);
-    console.log(LineToggle.lines());
     return $state.toggleable && !$state.loading && (LineToggle.lines().length > 1);
   }
 
@@ -474,7 +468,6 @@ CTA.controller("NearbyCtrl", function($scope, $state, $statechart, Analytics, St
   }
 
   $scope.gotoStation = function(station) {
-    console.log("Nearby.gotoStation");
     $statechart.goto("/tracks/loading-station");
     StationService.current = station;
     StationService.loadStation(station);
