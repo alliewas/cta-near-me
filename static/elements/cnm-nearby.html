@@ -1,0 +1,31 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<link rel="import" href="/elements/nearby-service.html">
+<link rel="import" href="/elements/cnm-station.html">
+
+<polymer-element name="cnm-nearby">
+  <template>
+    <style>
+    :host {
+      display: block;
+      width: 100%;
+    }
+    </style>
+
+    <nearby-service id="service" stations="{{stations}}"></nearby-service>
+
+    <div layout vertical center>
+      <template repeat="{{station in stations}}">
+        <cnm-station station="{{station}}"></cnm-station>
+      </template>
+    </div>
+
+  </template>
+  <script>
+  Polymer("cnm-nearby", {
+    ready: function() {
+      console.log("cnm-nearby ready");
+    }
+  });
+  </script>
+</polymer-element>

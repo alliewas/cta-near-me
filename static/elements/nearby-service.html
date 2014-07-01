@@ -1,0 +1,45 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/core-ajax/core-ajax.html">
+
+<link rel="import" href="/elements/location-service.html">
+
+<polymer-element name="nearby-service" attributes="stations">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+
+    <location-service id="loc"
+      on-got-location="{{gotLocation}}">
+    </location>
+    
+    <core-ajax id="ajax"
+      url="/api/nearby"
+      params='{"latitude": {{latitude}}, "longitude": {{longitude}}}'
+      on-core-response="{{stationsLoaded}}"
+      handleAs="json">
+    </core-ajax>
+  </template>
+  <script>
+  Polymer("nearby-service", {
+    created: function() {
+      this.stations = [];
+    },
+    ready: function() {
+      this.$.loc.get();
+    },
+    stationsLoaded: function() {
+      console.log("nearby stations", this.$.ajax.response.slice(0));
+      this.stations = this.$.ajax.response.slice(0);
+    },
+    gotLocation: function() {
+      this.latitude = this.$.loc.latitude;
+      this.longitude = this.$.loc.longitude;
+      console.log("location", this.latitude, this.longitude);
+      this.$.ajax.go();
+    }
+  });
+  </script>
+</polymer-element>

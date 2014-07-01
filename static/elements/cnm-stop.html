@@ -1,0 +1,111 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="cnm-stop" attributes="stop">
+  <template>
+    <link rel="stylesheet" href="/css/colors.css">
+    <style>
+    :host {
+      display: block;
+      width: 100%;
+    }
+
+    .arrival hr {
+      margin: 0;
+      width: 80%;
+    }
+
+    .arrival hr.line-Red {
+      border-top: 1px solid #c60c30;
+    }
+
+    .arrival hr.line-Blue {
+      border-top: 1px solid #00a1de;
+    }
+
+    .arrival hr.line-Brn {
+      border-top: 1px solid #62361b;
+    }
+
+    .arrival hr.line-G {
+      border-top: 1px solid #009b3a;
+    }
+
+    .arrival hr.line-Org {
+      border-top: 1px solid #f9461c;
+    }
+
+    .arrival hr.line-P {
+      border-top: 1px solid #522398;
+    }
+
+    .arrival hr.line-Pexp {
+      border-top: 1px solid #522398;
+    }
+
+    .arrival hr.line-Pink {
+      border-top: 1px solid #e27ea6;
+    }
+
+    .arrival hr.line-Y {
+      border-top: 1px solid #f9e300;
+    }
+    </style>
+
+    <div class="line-{{stop.LineKey}}">
+      <p>{{stop.Name}}</p>
+    </div>
+    <div layout horizontal>
+      <template repeat="{{arrival in arrivals}}">
+        <div flex class="arrival">
+          <template if="{{arrival != null}}">
+          <div layout vertical center>
+            <template if="{{!arrival.IsApproaching}}">
+              {{arrival.ArrivingInMinutes}}
+              {{"min" | pluralize(arrival.ArrivingInMinutes)}}
+            </template>
+            <template if="{{arrival.IsApproaching}}">
+              Approaching
+            </template>
+            <hr class="line-{{stop.LineKey}}">
+            {{arrival.ArrivingAt | shortTime}}
+          </div>
+          </template>
+        </div>
+      </template>
+    </div>
+  </template>
+  <script>
+  Polymer("cnm-stop", {
+    computed: {
+      arrivals: "sliced(stop.Arrivals)"
+    },
+    sliced: function(value) {
+      if (value) {
+        var arr = value.slice(0);           // copy array
+        arr.splice(3, 0, null, null, null); // make sure it's at least 3 long
+        return arr.splice(0, 3);            // only return the first three
+      }
+    },
+    pluralize: function(base, value) {
+      if (value != 1) {
+        return base + "s";
+      } else {
+        return base;
+      }
+    },
+    shortTime: function(value) {
+      if (value) {
+        var d = new Date(value);
+        var hours = d.getHours();
+        var ampm = "AM";
+        if (hours > 12) {
+          hours -= 12;
+          ampm = "PM";
+        }
+        var minutes = d.getMinutes();
+        return hours + ":" + minutes + " " + ampm;
+      }
+    }
+  });
+  </script>
+</polymer-element>

@@ -1,0 +1,50 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<link rel="import" href="/elements/cnm-stop.html">
+
+<polymer-element name="cnm-station" attributes="station">
+  <template>
+    <style>
+    :host {
+      display: block;
+      width: 100%;
+    }
+    .container {
+      padding: 10px;
+      margin: 10px;
+    }
+    .station .name {
+      float: left;
+      font-size: 18pt;
+      font-weight: bold;
+    }
+    .station .distance {
+      float: right;
+    }
+    .clear {
+      clear: both;
+    }
+    </style>
+
+    <div class="container">
+      <div class="station">
+        <span class="name">{{station.Name}}</span>
+        <span class="distance">{{station.Kilometers | kmToMiles | toFixed(2)}} mi</span>
+      </div>
+      <div class="clear"></div>
+      <template repeat="{{stop in station.StopArrivals}}">
+        <cnm-stop stop="{{stop}}"></cnm-stop>
+      </template>
+    </div>
+  </template>
+  <script>
+  Polymer("cnm-station", {
+    kmToMiles: function(value) {
+      return value * 0.621371;
+    },
+    toFixed: function(value, precision) {
+      return Number(value).toFixed(precision);
+    }
+  });
+  </script>
+</polymer-element>

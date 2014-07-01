@@ -1,0 +1,63 @@
+.line-Red {
+  background: rgba(198, 12, 48, 1);
+}
+
+.line-Red.disabled {
+  background: rgba(198, 12, 48, 0.3);
+}
+
+.line-Blue {
+  background: rgba(0, 161, 222, 1);
+}
+
+.line-Blue.disabled {
+  background: rgba(0, 161, 222, 0.3);
+}
+
+.line-Brn {
+  background: rgba(98, 54, 27, 1);
+}
+
+.line-Brn.disabled {
+  background: rgba(98, 54, 27, 0.3);
+}
+
+.line-G {
+  background: rgba(0, 155, 58, 1);
+}
+
+.line-G.disabled {
+  background: rgba(0, 155, 58, 0.3);
+}
+
+.line-Org {
+  background: rgba(249, 70, 28, 1);
+}
+
+.line-Org.disabled {
+  background: rgba(249, 70, 28, 0.3);
+}
+
+.line-P {
+  background: rgba(80, 35, 152, 1);
+}
+
+.line-P.disabled {
+  background: rgba(80, 35, 152, 0.3);
+}
+
+.line-Pink {
+  background: rgba(226, 126, 166, 1);
+}
+
+.line-Pink.disabled {
+  background: rgba(226, 126, 166, 0.3);
+}
+
+.line-Y {
+  background: rgba(249, 227, 0, 1);
+}
+
+.line-Y.disabled {
+  background: rgba(249, 227, 0, 0.3);
+}
