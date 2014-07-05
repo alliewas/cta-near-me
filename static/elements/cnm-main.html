@@ -33,26 +33,23 @@
 
     <core-header-panel>
       <core-toolbar>
-        <paper-tabs id="tabs" selected="0">
-          <paper-tab>Nearby</paper-tab>
-          <paper-tab>Tracks</paper-tab>
-          <paper-tab>Favorites</paper-tab>
+        <paper-tabs id="tabs" valueattr="name" selected="nearby">
+          <paper-tab name="nearby">Nearby</paper-tab>
+          <paper-tab name="tracks">Tracks</paper-tab>
+          <paper-tab name="favorites">Favorites</paper-tab>
         </paper-tabs>
       </core-toolbar>
       <div class="container" layout vertical center>
-        <cnm-nearby hidden?="{{selectedIndex != 0}}"></cnm-nearby>
-        <cnm-tracks hidden?="{{selectedIndex != 1}}"></cnm-tracks>
-        <cnm-favorites hidden?="{{selectedIndex != 2}}"></cnm-favorites>
+        <cnm-nearby id="nearby" hidden?="{{selected != 'nearby'}}"></cnm-nearby>
+        <cnm-tracks id="tracks" hidden?="{{selected != 'tracks'}}"></cnm-tracks>
+        <cnm-favorites id="favorites" hidden?="{{selected != 'favorites'}}"></cnm-favorites>
       </div>
     </core-header-panel>
 
   </template>
   <script>
   Polymer("cnm-main", {
-    selectedIndex: {
-      value: 0,
-      reflect: true
-    },
+    selected: "nearby",
     ready: function() {
       console.log("cnm-main ready");
       var tabs = this.$.tabs;
@@ -60,7 +57,8 @@
       tabs.addEventListener("core-select", function(e) {
         if (e.detail.isSelected) {
           console.log(tabs.selected);
-          self.selectedIndex = tabs.selected;
+          self.selected = tabs.selected;
+          self.$[tabs.selected].load();
         }
       });
     }

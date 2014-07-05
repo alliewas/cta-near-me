@@ -1,17 +1,39 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
 
+<link rel="import" href="/elements/favorite-service.html">
+<link rel="import" href="/elements/stops-service.html">
+<link rel="import" href="/elements/cnm-footer.html">
+
 <polymer-element name="cnm-favorites">
   <template>
     <style>
+    :host {
+      display: block;
+      width: 100%;
+    }
     </style>
 
-    <h1>Favorites!</h1>
+    <favorite-service id="favorite_service"></favorite-service>
+    <stops-service id="stops_service" stations="{{stations}}"></stops-service>
+
+    <div layout vertical center>
+      <template repeat="{{station in stations}}">
+        <cnm-station station="{{station}}" favorites="true"></cnm-station>
+      </template>
+    </div>
+
+    <cnm-footer on-refresh="{{load}}"></cnm-footer>
 
   </template>
   <script>
   Polymer("cnm-favorites", {
-    ready: function() {
-      console.log("cnm-favorites ready");
+    load: function() {
+      console.log(this.$.favorite_service.stopIds());
+      this.$.stops_service.stopIds = this.$.favorite_service.stopIds();
+      this.$.stops_service.load();
+    },
+    stopIdsChanged: function() {
+      console.log("stopIds", this.stopIds);
     }
   });
   </script>

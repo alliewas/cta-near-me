@@ -2,6 +2,7 @@
 
 <link rel="import" href="/elements/nearby-service.html">
 <link rel="import" href="/elements/cnm-station.html">
+<link rel="import" href="/elements/cnm-footer.html">
 
 <polymer-element name="cnm-nearby">
   <template>
@@ -10,6 +11,7 @@
       display: block;
       width: 100%;
     }
+
     </style>
 
     <nearby-service id="service" stations="{{stations}}"></nearby-service>
@@ -20,11 +22,13 @@
       </template>
     </div>
 
+    <cnm-footer on-refresh="{{load}}"></cnm-footer>
+
   </template>
   <script>
   Polymer("cnm-nearby", {
-    ready: function() {
-      console.log("cnm-nearby ready");
+    load: function() {
+      this.$.service.load();
     }
   });
   </script>

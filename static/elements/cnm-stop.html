@@ -1,6 +1,9 @@
 <link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/core-icon-button/core-icon-button.html">
 
-<polymer-element name="cnm-stop" attributes="stop">
+<link rel="import" href="/elements/favorite-service.html">
+
+<polymer-element name="cnm-stop" attributes="stop favorites">
   <template>
     <link rel="stylesheet" href="/css/colors.css">
     <style>
@@ -9,75 +12,72 @@
       width: 100%;
     }
 
+    .line {
+      padding-left: 8px;
+      padding-right: 8px;
+      padding-top: 6px;
+      padding-bottom: 6px;
+      font-size: 14px;
+      color: white;
+    }
+
     .arrival hr {
-      margin: 0;
+      margin-top: 4px;
+      margin-bottom: 4px;
       width: 80%;
     }
 
-    .arrival hr.line-Red {
-      border-top: 1px solid #c60c30;
+    .arrivals {
+      padding-top: 5px;
+      padding-bottom: 5px;
     }
 
-    .arrival hr.line-Blue {
-      border-top: 1px solid #00a1de;
-    }
-
-    .arrival hr.line-Brn {
-      border-top: 1px solid #62361b;
-    }
-
-    .arrival hr.line-G {
-      border-top: 1px solid #009b3a;
-    }
-
-    .arrival hr.line-Org {
-      border-top: 1px solid #f9461c;
-    }
-
-    .arrival hr.line-P {
-      border-top: 1px solid #522398;
-    }
-
-    .arrival hr.line-Pexp {
-      border-top: 1px solid #522398;
-    }
-
-    .arrival hr.line-Pink {
-      border-top: 1px solid #e27ea6;
-    }
-
-    .arrival hr.line-Y {
-      border-top: 1px solid #f9e300;
-    }
     </style>
 
-    <div class="line-{{stop.LineKey}}">
-      <p>{{stop.Name}}</p>
-    </div>
-    <div layout horizontal>
-      <template repeat="{{arrival in arrivals}}">
-        <div flex class="arrival">
-          <template if="{{arrival != null}}">
-          <div layout vertical center>
-            <template if="{{!arrival.IsApproaching}}">
-              {{arrival.ArrivingInMinutes}}
-              {{"min" | pluralize(arrival.ArrivingInMinutes)}}
-            </template>
-            <template if="{{arrival.IsApproaching}}">
-              Approaching
-            </template>
-            <hr class="line-{{stop.LineKey}}">
-            {{arrival.ArrivingAt | shortTime}}
-          </div>
-          </template>
+    <favorite-service id="favorite_service"
+      on-favorite-toggled="{{favoriteToggled}}">
+    </favorite-service>
+
+    <template if="{{show}}">
+      <div class="line line-{{stop.LineKey}}" layout horizontal center>
+        <div>{{stop.Name}}</div>
+        <div flex></div>
+        <div>
+          <core-icon-button
+            icon="{{favoriteIcon}}"
+            on-tap="{{favoriteTapped}}">
+          </core-icon-button>
         </div>
-      </template>
-    </div>
+      </div>
+      <div layout horizontal class="arrivals">
+        <template repeat="{{arrival in arrivals}}">
+          <div flex class="arrival">
+            <template if="{{arrival != null}}">
+              <div layout vertical center>
+                <template if="{{!arrival.IsApproaching}}">
+                  {{arrival.ArrivingInMinutes}}
+                  {{"min" | pluralize(arrival.ArrivingInMinutes)}}
+                </template>
+                <template if="{{arrival.IsApproaching}}">
+                  Approaching
+                </template>
+                <hr class="line-{{stop.LineKey}}">
+                {{arrival.ArrivingAt | shortTime}}
+              </div>
+            </template>
+          </div>
+        </template>
+      </div>
+    </template>
   </template>
   <script>
   Polymer("cnm-stop", {
+    favorites: false,
+    favoriteKick: 0,
     computed: {
-      arrivals: "sliced(stop.Arrivals)"
+      arrivals: "sliced(stop.Arrivals)",
+      favoriteIcon: "chooseFavoriteIcon(stop, favoriteKick)",
+      show: "computeShow(stop, favorites)"
     },
     sliced: function(value) {
       if (value) {
@@ -103,8 +103,42 @@
           ampm = "PM";
         }
         var minutes = d.getMinutes();
+        if (minutes < 10) {
+          minutes = "0" + minutes;
+        }
         return hours + ":" + minutes + " " + ampm;
       }
+    },
+    chooseFavoriteIcon: function(stop) {
+      if (this.$ && stop) {
+        if (this.$.favorite_service.isFavorite(stop)) {
+          return "favorite";
+        } else {
+          return "favorite-outline";
+        }
+      } else {
+        return "favorite-outline";
+      }
+    },
+    computeShow: function(stop, favorites) {
+      if (!favorites) {
+        return true;
+      } else if (this.$ && stop) {
+        if (!this.$.favorite_service.isFavorite(stop)) {
+          return false;
+        } else {
+          return true;
+        }
+      } else {
+        return true;
+      }
+    },
+    favoriteTapped: function(e) {
+      this.$.favorite_service.toggleFavorite(this.stop);
+    },
+    favoriteToggled: function(e) {
+      console.log("favorite-toggled", e.detail);
+      this.favoriteKick++;
     }
   });
   </script>

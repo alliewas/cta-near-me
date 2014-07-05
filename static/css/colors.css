@@ -61,3 +61,39 @@
 .line-Y.disabled {
   background: rgba(249, 227, 0, 0.3);
 }
+
+hr.line-Red {
+  border-top: 1px solid #c60c30;
+}
+
+hr.line-Blue {
+  border-top: 1px solid #00a1de;
+}
+
+hr.line-Brn {
+  border-top: 1px solid #62361b;
+}
+
+hr.line-G {
+  border-top: 1px solid #009b3a;
+}
+
+hr.line-Org {
+  border-top: 1px solid #f9461c;
+}
+
+hr.line-P {
+  border-top: 1px solid #522398;
+}
+
+hr.line-Pexp {
+  border-top: 1px solid #522398;
+}
+
+hr.line-Pink {
+  border-top: 1px solid #e27ea6;
+}
+
+hr.line-Y {
+  border-top: 1px solid #f9e300;
+}

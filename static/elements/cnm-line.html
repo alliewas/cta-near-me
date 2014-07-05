@@ -1,0 +1,28 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="cnm-line" attributes="line">
+  <template>
+    <link rel="stylesheet" href="/css/colors.css">
+    <style>
+    :host {
+      display: block;
+      width: 100%;
+    }
+    .line {
+      padding: 10px;
+      margin-bottom: 10px;
+      color: white;
+      font-weight: bold;
+      font-size: 18pt;
+    }
+    </style>
+
+    <div class="line line-{{line.Key}}">
+      {{line.Name}}
+    </div>
+  </template>
+  <script>
+  Polymer("cnm-line", {
+  });
+  </script>
+</polymer-element>

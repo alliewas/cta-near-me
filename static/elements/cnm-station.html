@@ -2,7 +2,7 @@
 
 <link rel="import" href="/elements/cnm-stop.html">
 
-<polymer-element name="cnm-station" attributes="station">
+<polymer-element name="cnm-station" attributes="station favorites">
   <template>
     <style>
     :host {
@@ -11,34 +11,27 @@
     }
     .container {
       padding: 10px;
-      margin: 10px;
     }
     .station .name {
-      float: left;
       font-size: 18pt;
       font-weight: bold;
-    }
-    .station .distance {
-      float: right;
-    }
-    .clear {
-      clear: both;
     }
     </style>
 
     <div class="container">
-      <div class="station">
+      <div layout horizontal center class="station">
         <span class="name">{{station.Name}}</span>
+        <div flex></div>
         <span class="distance">{{station.Kilometers | kmToMiles | toFixed(2)}} mi</span>
       </div>
-      <div class="clear"></div>
       <template repeat="{{stop in station.StopArrivals}}">
-        <cnm-stop stop="{{stop}}"></cnm-stop>
+        <cnm-stop stop="{{stop}}" favorites="{{favorites}}"></cnm-stop>
       </template>
     </div>
   </template>
   <script>
   Polymer("cnm-station", {
+    favorites: false,
     kmToMiles: function(value) {
       return value * 0.621371;
     },

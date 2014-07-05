@@ -1,0 +1,32 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/core-ajax/core-ajax.html">
+
+<polymer-element name="lines-service" attributes="lines">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+
+    <core-ajax id="ajax"
+      url="/api/lines"
+      on-core-response="{{linesLoaded}}"
+      handleAs="json">
+    </core-ajax>
+  </template>
+  <script>
+  Polymer("lines-service", {
+    created: function() {
+      this.lines = [];
+    },
+    load: function() {
+      this.$.ajax.go();
+    },
+    linesLoaded: function() {
+      this.lines = this.$.ajax.response.slice(0);
+      console.log("lines", this.lines);
+    }
+  });
+  </script>
+</polymer-element>
