@@ -46,7 +46,6 @@
         delete this.stops[stop.LineKey][stop.StopId];
       }
       this.$.store.save();
-      this.kick++;
       this.fire("favorite-toggled", {"stop": stop});
     },
     addFavorite: function(stop) {
@@ -57,7 +56,6 @@
         this.stops[stop.LineKey][stop.StopId] = true;
       }
       this.$.store.save();
-      this.kick++;
       this.fire("favorite-toggled", {"stop": stop});
     },
     stopIds: function() {
