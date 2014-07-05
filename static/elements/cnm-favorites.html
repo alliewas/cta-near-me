@@ -28,12 +28,8 @@
   <script>
   Polymer("cnm-favorites", {
     load: function() {
-      console.log(this.$.favorite_service.stopIds());
       this.$.stops_service.stopIds = this.$.favorite_service.stopIds();
       this.$.stops_service.load();
-    },
-    stopIdsChanged: function() {
-      console.log("stopIds", this.stopIds);
     }
   });
   </script>
