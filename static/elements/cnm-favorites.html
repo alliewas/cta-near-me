@@ -11,16 +11,40 @@
       display: block;
       width: 100%;
     }
+    
+    .loading {
+      margin-top: 60px;
+    }
     </style>
 
     <favorite-service id="favorite_service"></favorite-service>
-    <stops-service id="stops_service" stations="{{stations}}"></stops-service>
+    <stops-service
+      id="stops_service"
+      stations="{{stations}}"
+      on-loading-location="{{loadingLocation}}"
+      on-loading-data="{{loadingData}}"
+      on-loaded-data="{{loadedData}}">
+    </stops-service>
 
-    <div layout vertical center>
-      <template repeat="{{station in stations}}">
-        <cnm-station station="{{station}}" favorites="true"></cnm-station>
-      </template>
-    </div>
+    <template if="{{state == 'loaded'}}">
+      <div layout vertical center>
+        <template repeat="{{station in stations}}">
+          <cnm-station station="{{station}}" favorites="true"></cnm-station>
+        </template>
+      </div>
+    </template>
+
+    <template if="{{state == 'loading-location'}}">
+      <div class="loading" layout vertical center>
+        Loading Location...
+      </div>
+    </template>
+
+    <template if="{{state == 'loading-data'}}">
+      <div class="loading" layout vertical center>
+        Loading Data...
+      </div>
+    </template>
 
     <cnm-footer on-refresh="{{load}}"></cnm-footer>
 
@@ -30,6 +54,15 @@
     load: function() {
       this.$.stops_service.stopIds = this.$.favorite_service.stopIds();
       this.$.stops_service.load();
+    },
+    loadingLocation: function() {
+      this.state = "loading-location";
+    },
+    loadingData: function() {
+      this.state = "loading-data";
+    },
+    loadedData: function() {
+      this.state = "loaded";
     }
   });
   </script>

@@ -35,18 +35,19 @@
       }
     },
     load: function() {
+      this.fire("loading-location");
       this.$.loc.get();
     },
     gotLocation: function() {
       console.log("stops gotLocation");
       this.latitude = this.$.loc.latitude;
       this.longitude = this.$.loc.longitude;
+      this.fire("loading-data");
       this.$.ajax.go();
     },
     stationsLoaded: function() {
-      console.log("stops stationsLoaded");
       this.stations = this.$.ajax.response.slice(0);
-      console.log(this.stations);
+      this.fire("loaded-data");
     }
   });
   </script>

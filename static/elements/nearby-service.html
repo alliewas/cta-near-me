@@ -28,16 +28,19 @@
       this.stations = [];
     },
     load: function() {
+      this.fire("loading-location");
       this.$.loc.get();
     },
     stationsLoaded: function() {
       console.log("nearby stations", this.$.ajax.response.slice(0));
       this.stations = this.$.ajax.response.slice(0);
+      this.fire("loaded-data");
     },
     gotLocation: function() {
       this.latitude = this.$.loc.latitude;
       this.longitude = this.$.loc.longitude;
       console.log("location", this.latitude, this.longitude);
+      this.fire("loading-data");
       this.$.ajax.go();
     }
   });
