@@ -2,7 +2,7 @@
 
 <link rel="import" href="/elements/cnm-stop.html">
 
-<polymer-element name="cnm-station" attributes="station favorites">
+<polymer-element name="cnm-station" attributes="station favorites hiddenLines">
   <template>
     <style>
     :host {
@@ -25,7 +25,7 @@
         <span class="distance">{{station.Kilometers | kmToMiles | toFixed(2)}} mi</span>
       </div>
       <template repeat="{{stop in station.StopArrivals}}">
-        <cnm-stop stop="{{stop}}" favorites="{{favorites}}"></cnm-stop>
+        <cnm-stop stop="{{stop}}" favorites="{{favorites}}" hiddenLines="{{hiddenLines}}"></cnm-stop>
       </template>
     </div>
   </template>

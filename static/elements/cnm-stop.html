@@ -3,7 +3,7 @@
 
 <link rel="import" href="/elements/favorite-service.html">
 
-<polymer-element name="cnm-stop" attributes="stop favorites">
+<polymer-element name="cnm-stop" attributes="stop favorites hiddenLines">
   <template>
     <link rel="stylesheet" href="/css/colors.css">
     <style>
@@ -38,7 +38,7 @@
       on-favorite-toggled="{{favoriteToggled}}">
     </favorite-service>
 
-    <template if="{{show}}">
+    <template if="{{showFavorite && showHiddenLines}}">
       <div class="line line-{{stop.LineKey}}" layout horizontal center>
         <div>{{stop.Name}}</div>
         <div flex></div>
@@ -77,7 +77,8 @@
     computed: {
       arrivals: "sliced(stop.Arrivals)",
       favoriteIcon: "chooseFavoriteIcon(stop, favoriteKick)",
-      show: "computeShow(stop, favorites)"
+      showFavorite: "computeShowFavorite(stop, favorites)",
+      showHiddenLines: "computeShowHiddenLines(stop, hiddenLines)"
     },
     sliced: function(value) {
       if (value) {
@@ -120,7 +121,7 @@
         return "favorite-outline";
       }
     },
-    computeShow: function(stop, favorites) {
+    computeShowFavorite: function(stop, favorites) {
       if (!favorites) {
         return true;
       } else if (this.$ && stop) {
@@ -129,6 +130,14 @@
         } else {
           return true;
         }
+      } else {
+        return true;
+      }
+    },
+    computeShowHiddenLines: function(stop, hiddenLines) {
+      if (stop && hiddenLines) {
+        var lines = hiddenLines.split(",");
+        return lines.indexOf(stop.LineKey) == -1;
       } else {
         return true;
       }

@@ -7,6 +7,7 @@
 <link rel="import" href="/elements/cnm-line-station.html">
 <link rel="import" href="/elements/station-service.html">
 <link rel="import" href="/elements/cnm-footer.html">
+<link rel="import" href="/elements/cnm-line-toggle.html">
 
 <polymer-element name="cnm-tracks">
   <template>
@@ -51,25 +52,43 @@
     <template if="{{show == 'station'}}">
       <div layout vertical start>
         <paper-button label="Back" on-tap="{{backToStations}}"></paper-button>
-        <cnm-station station="{{currentStation}}"></cnm-station>
+        <cnm-station station="{{currentStation}}" hiddenLines="{{hiddenLines}}"></cnm-station>
       </div>
       <cnm-footer on-refresh="{{stationRefresh}}"></cnm-footer>
+      <cnm-line-toggle stations="{{currentStations}}" on-toggle="{{linesToggled}}" whitelist="{{currentLineKey}}"></cnm-line-toggle>
     </template>
 
   </template>
   <script>
   Polymer("cnm-tracks", {
     show: "lines",
-    currentLine: null,
-    currentStation: null,
+    created: function() {
+      this.currentLine = null;
+      this.currentStation = null;
+    },
+    computed: {
+      currentStations: "computeCurrentStations(currentStation)"
+    },
     load: function() {
       this.$.lines_service.load();
+    },
+    computeCurrentStations: function(currentStation) {
+      if (currentStation) {
+        return [currentStation];
+      } else {
+        return [];
+      }
     },
     lineTap: function(e) {
       this.currentLine = e.target.line;
       this.show = "stations";
       this.$.stations_service.load();
       console.log(this.currentLine);
+    },
+    currentLineChanged: function() {
+      if (this.currentLine) {
+        this.currentLineKey = this.currentLine.Key;
+      }
     },
     backToLines: function() {
       this.currentLine = null;
@@ -87,6 +106,9 @@
     },
     stationRefresh: function() {
       this.$.station_service.load();
+    },
+    linesToggled: function(e, detail) {
+      this.hiddenLines = detail.hiddenLines;
     }
   });
   </script>

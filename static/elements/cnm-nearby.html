@@ -3,6 +3,7 @@
 <link rel="import" href="/elements/nearby-service.html">
 <link rel="import" href="/elements/cnm-station.html">
 <link rel="import" href="/elements/cnm-footer.html">
+<link rel="import" href="/elements/cnm-line-toggle.html">
 
 <polymer-element name="cnm-nearby">
   <template>
@@ -27,7 +28,7 @@
     <template if="{{state == 'loaded'}}">
       <div layout vertical center>
         <template repeat="{{station in stations}}">
-          <cnm-station station="{{station}}"></cnm-station>
+          <cnm-station station="{{station}}" hiddenLines="{{hiddenLines}}"></cnm-station>
         </template>
       </div>
     </template>
@@ -45,6 +46,7 @@
     </template>
 
     <cnm-footer on-refresh="{{load}}"></cnm-footer>
+    <cnm-line-toggle stations="{{stations}}" on-toggle="{{linesToggled}}"></cnm-line-toggle>
 
   </template>
   <script>
@@ -60,6 +62,9 @@
     },
     loadedData: function() {
       this.state = "loaded";
+    },
+    linesToggled: function(e, detail) {
+      this.hiddenLines = detail.hiddenLines;
     }
   });
   </script>
