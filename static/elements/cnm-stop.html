@@ -74,10 +74,13 @@
   Polymer("cnm-stop", {
     favorites: false,
     favoriteKick: 0,
+    ready: function() {
+      this.favoriteKick++;
+    },
     computed: {
       arrivals: "sliced(stop.Arrivals)",
       favoriteIcon: "chooseFavoriteIcon(stop, favoriteKick)",
-      showFavorite: "computeShowFavorite(stop, favorites)",
+      showFavorite: "computeShowFavorite(stop, favorites, favoriteKick)",
       showHiddenLines: "computeShowHiddenLines(stop, hiddenLines)"
     },
     sliced: function(value) {
@@ -121,7 +124,7 @@
         return "favorite-outline";
       }
     },
-    computeShowFavorite: function(stop, favorites) {
+    computeShowFavorite: function(stop, favorites, serv) {
       if (!favorites) {
         return true;
       } else if (this.$ && stop) {
