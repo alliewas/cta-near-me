@@ -1,0 +1,48 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/core-ajax/core-ajax.html">
+
+<link rel="import" href="/elements/location-service.html">
+
+<polymer-element name="stations-service" attributes="stations line">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+
+    <location-service id="loc"
+      on-got-location="{{gotLocation}}">
+    </location-service>
+
+    <core-ajax id="ajax"
+      url="/api/stations"
+      params='{"line": "{{line.Key}}", "latitude": {{latitude}}, "longitude": {{longitude}}}'
+      on-core-response="{{stationsLoaded}}"
+      handleAs="json">
+    </core-ajax>
+  </template>
+  <script>
+  Polymer("stations-service", {
+    created: function() {
+      console.log("stations-service created");
+      this.stations = [];
+    },
+    ready: function() {
+      console.log("lat", this.$.loc.latitude);
+    },
+    load: function() {
+      this.$.loc.get();
+    },
+    gotLocation: function() {
+      this.latitude = this.$.loc.latitude;
+      this.longitude = this.$.loc.longitude;
+      this.$.ajax.go();
+    },
+    stationsLoaded: function() {
+      this.stations = this.$.ajax.response.slice(0);
+      console.log("stations", this.stations);
+    }
+  });
+  </script>
+</polymer-element>

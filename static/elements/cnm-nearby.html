@@ -1,0 +1,71 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<link rel="import" href="/elements/nearby-service.html">
+<link rel="import" href="/elements/cnm-station.html">
+<link rel="import" href="/elements/cnm-footer.html">
+<link rel="import" href="/elements/cnm-line-toggle.html">
+
+<polymer-element name="cnm-nearby">
+  <template>
+    <style>
+    :host {
+      display: block;
+      width: 100%;
+    }
+    
+    .loading {
+      margin-top: 60px;
+    }
+    </style>
+
+    <nearby-service id="service" 
+      stations="{{stations}}"
+      on-loading-location="{{loadingLocation}}"
+      on-loading-data="{{loadingData}}"
+      on-loaded-data="{{loadedData}}">
+    </nearby-service>
+
+    <template if="{{state == 'loaded'}}">
+      <div layout vertical center>
+        <template repeat="{{station in stations}}">
+          <cnm-station station="{{station}}" hiddenLines="{{hiddenLines}}"></cnm-station>
+        </template>
+      </div>
+    </template>
+
+    <template if="{{state == 'loading-location'}}">
+      <div class="loading" layout vertical center>
+        Loading Location...
+      </div>
+    </template>
+
+    <template if="{{state == 'loading-data'}}">
+      <div class="loading" layout vertical center>
+        Loading Data...
+      </div>
+    </template>
+
+    <cnm-footer on-refresh="{{load}}"></cnm-footer>
+    <cnm-line-toggle stations="{{stations}}" on-toggle="{{linesToggled}}"></cnm-line-toggle>
+
+  </template>
+  <script>
+  Polymer("cnm-nearby", {
+    load: function() {
+      this.$.service.load();
+    },
+    loadingLocation: function() {
+      this.state = "loading-location";
+    },
+    loadingData: function() {
+      this.state = "loading-data";
+    },
+    loadedData: function() {
+      this.state = "loaded";
+    },
+    linesToggled: function(e, detail) {
+      this.hiddenLines = detail.hiddenLines;
+    }
+  });
+  </script>
+</polymer-element>

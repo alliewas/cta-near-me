@@ -1,0 +1,33 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="location-service">
+  <template>
+  <style>
+    :host {
+      display: none;
+    }
+  </style>
+  </template>
+  <script>
+  Polymer("location-service", {
+    latitude: 0,
+    longitude: 0,
+    available: function() {
+      return navigator.geolocation;
+    },
+    get: function() {
+      if (this.available()) {
+        var self = this;
+        navigator.geolocation.getCurrentPosition(function(position) {
+          console.log("got location", position.coords);
+          self.latitude = position.coords.latitude;
+          self.longitude = position.coords.longitude;
+          self.fire("got-location");
+        }, function(msg) {
+          console.log("geo error", msg);
+        });
+      }
+    }
+  });
+  </script>
+</polymer-element>

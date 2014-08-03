@@ -1,0 +1,75 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/core-localstorage/core-localstorage.html">
+
+<polymer-element name="favorite-service" attributes="stops">
+  <template>
+    <style>
+    :host {
+      display: none;
+    }
+    </style>
+
+    <core-localstorage id="store" name="favoriteStops" value="{{stops}}"></core-localstorage>
+
+  </template>
+  <script>
+  /*
+  stops is a map of maps.
+  stops[LineKey][StopId] = true
+  */
+  Polymer("favorite-service", {
+    ready: function() {
+      this.$.store.load();
+      this.stops = this.stops || {};
+    },
+    isFavorite: function(stop) {
+      this.$.store.load();
+      if (this.stops[stop.LineKey]) {
+        if (this.stops[stop.LineKey][stop.StopId]) {
+          return true;
+        } else {
+          return false;
+        }
+      } else {
+        return false;
+      }
+    },
+    toggleFavorite: function(stop) {
+      if (this.isFavorite(stop)) {
+        this.removeFavorite(stop);
+      } else {
+        this.addFavorite(stop);
+      }
+    },
+    removeFavorite: function(stop) {
+      if (this.isFavorite(stop)) {
+        delete this.stops[stop.LineKey][stop.StopId];
+      }
+      this.$.store.save();
+      this.fire("favorite-toggled", {"stop": stop});
+    },
+    addFavorite: function(stop) {
+      if (!this.isFavorite(stop)) {
+        if (!this.stops[stop.LineKey]) {
+          this.stops[stop.LineKey] = {}
+        }
+        this.stops[stop.LineKey][stop.StopId] = true;
+      }
+      this.$.store.save();
+      this.fire("favorite-toggled", {"stop": stop});
+    },
+    stopIds: function() {
+      this.$.store.load();
+      var stopIds = [];
+      if (this.stops) {
+        for (var lineKey in this.stops) {
+          for (var stopId in this.stops[lineKey]) {
+            stopIds.push(stopId);
+          }
+        }
+      }
+      return stopIds;
+    }
+  });
+  </script>
+</polymer-element>

@@ -1,0 +1,99 @@
+.line-Red {
+  background: rgba(198, 12, 48, 1);
+}
+
+.line-Red.disabled {
+  background: rgba(198, 12, 48, 0.6);
+}
+
+.line-Blue {
+  background: rgba(0, 161, 222, 1);
+}
+
+.line-Blue.disabled {
+  background: rgba(0, 161, 222, 0.6);
+}
+
+.line-Brn {
+  background: rgba(98, 54, 27, 1);
+}
+
+.line-Brn.disabled {
+  background: rgba(98, 54, 27, 0.6);
+}
+
+.line-G {
+  background: rgba(0, 155, 58, 1);
+}
+
+.line-G.disabled {
+  background: rgba(0, 155, 58, 0.6);
+}
+
+.line-Org {
+  background: rgba(249, 70, 28, 1);
+}
+
+.line-Org.disabled {
+  background: rgba(249, 70, 28, 0.6);
+}
+
+.line-P {
+  background: rgba(80, 35, 152, 1);
+}
+
+.line-P.disabled {
+  background: rgba(80, 35, 152, 0.6);
+}
+
+.line-Pink {
+  background: rgba(226, 126, 166, 1);
+}
+
+.line-Pink.disabled {
+  background: rgba(226, 126, 166, 0.6);
+}
+
+.line-Y {
+  background: rgba(249, 227, 0, 1);
+}
+
+.line-Y.disabled {
+  background: rgba(249, 227, 0, 0.6);
+}
+
+hr.line-Red {
+  border-top: 1px solid #c60c30;
+}
+
+hr.line-Blue {
+  border-top: 1px solid #00a1de;
+}
+
+hr.line-Brn {
+  border-top: 1px solid #62361b;
+}
+
+hr.line-G {
+  border-top: 1px solid #009b3a;
+}
+
+hr.line-Org {
+  border-top: 1px solid #f9461c;
+}
+
+hr.line-P {
+  border-top: 1px solid #522398;
+}
+
+hr.line-Pexp {
+  border-top: 1px solid #522398;
+}
+
+hr.line-Pink {
+  border-top: 1px solid #e27ea6;
+}
+
+hr.line-Y {
+  border-top: 1px solid #f9e300;
+}

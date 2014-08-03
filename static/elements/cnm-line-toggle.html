@@ -1,0 +1,121 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+
+<polymer-element name="cnm-line-toggle" attributes="stations whitelist">
+  <template>
+    <link rel="stylesheet" href="/css/colors.css">
+    <style>
+    :host {
+      display: block;
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 135px;
+      background: rgba(0, 0, 0, 0.8);
+    }
+
+    .toggle {
+      border-radius: 50%;
+      -moz-border-radius: 50%;
+      -ms-border-radius: 50%;
+      -o-border-radius: 50%;
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      text-align: center;
+      margin: 2px;
+    }
+
+    .toggle .name {
+      margin-top: 11px;
+      color: white;
+    }
+    </style>
+
+    <div layout horizontal wrap center>
+      <template if="{{lines && lines.length > 1}}">
+        <template repeat="{{line in lines}}">
+          <div id="{{line}}" class="toggle line-{{line}} {{disabledLines[line]}}" on-tap="{{lineTapped}}">
+            <div class="name">{{line}}</div>
+          </div>
+        </template>
+      </template>
+    </div>
+
+  </template>
+  <script>
+  Polymer("cnm-line-toggle", {
+    created: function() {
+      this.hiddenLines = [];
+      this.whitelist = null;
+      this.disabledLines = {};
+    },
+    computed: {
+      lines: "computeLines(stations)",
+    },
+    computeLines: function(stations) {
+      var arr =  [];
+      if (stations) {
+        stations.forEach(function(station) {
+          station.StopArrivals.forEach(function(stop) {
+            if (arr.indexOf(stop.LineKey) == -1) {
+              arr.push(stop.LineKey);
+            }
+          });
+        });
+      }
+      return arr;
+    },
+    linesChanged: function(o, n) {
+      console.log("line-toggle lines", this.lines, o, n);
+      if (n) {
+        if (!o || (o.toString() != n.toString())) {
+          this.hiddenLines = [];
+          if (this.whitelist) {
+            n.forEach(function(line) {
+              if (line != this.whitelist) {
+                this.hiddenLines.push(line);
+              }
+            }, this);
+          }
+          this.fireToggle();
+        }
+      }
+      console.log("hidden", this.hiddenLines);
+    },
+    hiddenChanged: function() {
+      console.log("hiddenLines changed", this.hiddenLines);
+      this.fireToggle();
+    },
+    lineTapped: function(e) {
+      var elem = e.target;
+      while (!elem.id) {
+        elem = elem.parentElement;
+      }
+      this.toggle(elem.id);
+    },
+    toggle: function(line) {
+      console.log("line tapped", line);
+      var index = this.hiddenLines.indexOf(line);
+      if (index != -1) {
+        this.hiddenLines.splice(index, 1);
+      } else {
+        this.hiddenLines.push(line);
+      }
+      console.log("line toggle", this.hiddenLines);
+      this.fireToggle();
+    },
+    fireToggle: function() {
+      this.fire("toggle", { hiddenLines: this.hiddenLines.join(",") });
+      this.computeDisabledLines(this.hiddenLines);
+    },
+    computeDisabledLines: function(hiddenLines) {
+      this.disabledLines = {};
+      if (hiddenLines) {
+        hiddenLines.forEach(function(line) {
+          this.disabledLines[line] = "disabled";
+        }, this);
+      }
+    }
+  });
+  </script>
+</polymer-element>

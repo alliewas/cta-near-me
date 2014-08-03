@@ -1,0 +1,115 @@
+<link rel="import" href="/bower_components/polymer/polymer.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+
+<link rel="import" href="/elements/lines-service.html">
+<link rel="import" href="/elements/cnm-line.html">
+<link rel="import" href="/elements/stations-service.html">
+<link rel="import" href="/elements/cnm-line-station.html">
+<link rel="import" href="/elements/station-service.html">
+<link rel="import" href="/elements/cnm-footer.html">
+<link rel="import" href="/elements/cnm-line-toggle.html">
+
+<polymer-element name="cnm-tracks">
+  <template>
+    <style>
+    :host {
+      display: block;
+      width: 100%;
+    }
+    .container {
+      margin: 10px;
+    }
+    </style>
+
+    <lines-service id="lines_service" lines="{{lines}}"></lines-service>
+    <stations-service id="stations_service" stations="{{stations}}" line="{{currentLine}}"></stations-service>
+    <station-service id="station_service" station="{{currentStation}}"></station-service>
+
+    <template if="{{show == 'lines'}}">
+      <div layout vertical class="container">
+        <template repeat="{{line in lines}}">
+          <cnm-line 
+            line="{{line}}"
+            on-tap="{{lineTap}}">
+          </cnm-line>
+        </template>
+      </div>
+    </template>
+
+    <template if="{{show == 'stations'}}">
+      <div class="container" layout vertical start>
+        <paper-button label="Back" on-tap="{{backToLines}}"></paper-button>
+        <h1>{{currentLine.Name}}</h1>
+        <template repeat="{{station in stations}}">
+          <cnm-line-station
+            station="{{station}}"
+            on-tap="{{stationTap}}">
+          </cnm-line-station>
+        </template>
+      </div>
+    </template>
+
+    <template if="{{show == 'station'}}">
+      <div layout vertical start>
+        <paper-button label="Back" on-tap="{{backToStations}}"></paper-button>
+        <cnm-station station="{{currentStation}}" hiddenLines="{{hiddenLines}}"></cnm-station>
+      </div>
+      <cnm-footer on-refresh="{{stationRefresh}}"></cnm-footer>
+      <cnm-line-toggle stations="{{currentStations}}" on-toggle="{{linesToggled}}" whitelist="{{currentLineKey}}"></cnm-line-toggle>
+    </template>
+
+  </template>
+  <script>
+  Polymer("cnm-tracks", {
+    show: "lines",
+    created: function() {
+      this.currentLine = null;
+      this.currentStation = null;
+    },
+    computed: {
+      currentStations: "computeCurrentStations(currentStation)"
+    },
+    load: function() {
+      this.$.lines_service.load();
+    },
+    computeCurrentStations: function(currentStation) {
+      if (currentStation) {
+        return [currentStation];
+      } else {
+        return [];
+      }
+    },
+    lineTap: function(e) {
+      this.currentLine = e.target.line;
+      this.show = "stations";
+      this.$.stations_service.load();
+      console.log(this.currentLine);
+    },
+    currentLineChanged: function() {
+      if (this.currentLine) {
+        this.currentLineKey = this.currentLine.Key;
+      }
+    },
+    backToLines: function() {
+      this.currentLine = null;
+      this.show = "lines";
+    },
+    stationTap: function(e) {
+      console.log(e.target.station);
+      this.currentStation = e.target.station;
+      this.show = "station";
+      this.$.station_service.load();
+    },
+    backToStations: function() {
+      this.currentStation = null;
+      this.show = "stations";
+    },
+    stationRefresh: function() {
+      this.$.station_service.load();
+    },
+    linesToggled: function(e, detail) {
+      this.hiddenLines = detail.hiddenLines;
+    }
+  });
+  </script>
+</polymer-element>
