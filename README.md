@@ -77,7 +77,6 @@ echo "Compiling"
 cd cta-near-me; GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o cta-near-me.linux; cd ..
 echo "Uploading"
 pwd
-echo tar cvf cta-near-me.tar cta-near-me/cta-near-me.linux cta-near-me/template cta-near-me/static
 tar cvf cta-near-me.tar cta-near-me/cta-near-me.linux cta-near-me/template cta-near-me/static
 ssh -l sirsean ctanear.me mkdir -p cta-near-me
 ssh -l sirsean ctanear.me rm cta-near-me/cta-near-me.linux
