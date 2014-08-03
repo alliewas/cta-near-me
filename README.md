@@ -74,16 +74,19 @@ I deploy with a script like this:
 
 ```
 echo "Compiling"
-GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o cta-near-me.linux
+cd cta-near-me; GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o cta-near-me.linux; cd ..
 echo "Uploading"
+pwd
+echo tar cvf cta-near-me.tar cta-near-me/cta-near-me.linux cta-near-me/template cta-near-me/static
+tar cvf cta-near-me.tar cta-near-me/cta-near-me.linux cta-near-me/template cta-near-me/static
 ssh -l sirsean ctanear.me mkdir -p cta-near-me
 ssh -l sirsean ctanear.me rm cta-near-me/cta-near-me.linux
-scp cta-near-me.linux sirsean@ctanear.me:cta-near-me/
-scp -r template sirsean@ctanear.me:cta-near-me/
-scp -r static sirsean@ctanear.me:cta-near-me/
+scp cta-near-me.tar sirsean@ctanear.me:cta-near-me.tar
+ssh -l sirsean ctanear.me tar xvf cta-near-me.tar
 echo "Restarting"
 ssh -l root ctanear.me systemctl restart cta-near-me.service
 echo "Deployed"
+
 ```
 
 Note that you will need to set up your system to cross-compile for your target environment. (I deploy to a 64-bit Linux server.)
