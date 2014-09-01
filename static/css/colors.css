@@ -97,3 +97,39 @@ hr.line-Pink {
 hr.line-Y {
   border-top: 1px solid #f9e300;
 }
+
+.line-bottom-Red {
+  border-bottom: 4px solid #c60c30;
+}
+
+.line-bottom-Blue {
+  border-bottom: 4px solid #00a1de;
+}
+
+.line-bottom-Brn {
+  border-bottom: 4px solid #62361b;
+}
+
+.line-bottom-G {
+  border-bottom: 4px solid #009b3a;
+}
+
+.line-bottom-Org {
+  border-bottom: 4px solid #f9461c;
+}
+
+.line-bottom-P {
+  border-bottom: 4px solid #522398;
+}
+
+.line-bottom-Pexp {
+  border-bottom: 4px solid #522398;
+}
+
+.line-bottom-Pink {
+  border-bottom: 4px solid #e27ea6;
+}
+
+.line-bottom-Y {
+  border-bottom: 4px solid #f9e300;
+}
