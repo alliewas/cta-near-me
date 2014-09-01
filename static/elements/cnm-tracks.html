@@ -6,7 +6,7 @@
 <link rel="import" href="/elements/stations-service.html">
 <link rel="import" href="/elements/cnm-line-station.html">
 <link rel="import" href="/elements/station-service.html">
-<link rel="import" href="/elements/cnm-footer.html">
+<link rel="import" href="/elements/cnm-top-bar.html">
 <link rel="import" href="/elements/cnm-line-toggle.html">
 
 <polymer-element name="cnm-tracks">
@@ -37,8 +37,8 @@
     </template>
 
     <template if="{{show == 'stations'}}">
+      <cnm-top-bar show_back="true" on-back="{{backToLines}}"></cnm-top-bar>
       <div class="container" layout vertical start>
-        <paper-button label="Back" on-tap="{{backToLines}}"></paper-button>
         <h1>{{currentLine.Name}}</h1>
         <template repeat="{{station in stations}}">
           <cnm-line-station
@@ -50,12 +50,12 @@
     </template>
 
     <template if="{{show == 'station'}}">
+      <cnm-top-bar show_back="true" on-back="{{backToStations}}" show_refresh="true" on-refresh="{{stationRefresh}}">
+        <cnm-line-toggle stations="{{currentStations}}" on-toggle="{{linesToggled}}" whitelist="{{currentLineKey}}"></cnm-line-toggle>
+      </cnm-top-bar>
       <div layout vertical start>
-        <paper-button label="Back" on-tap="{{backToStations}}"></paper-button>
         <cnm-station station="{{currentStation}}" hiddenLines="{{hiddenLines}}"></cnm-station>
       </div>
-      <cnm-footer on-refresh="{{stationRefresh}}"></cnm-footer>
-      <cnm-line-toggle stations="{{currentStations}}" on-toggle="{{linesToggled}}" whitelist="{{currentLineKey}}"></cnm-line-toggle>
     </template>
 
   </template>

@@ -2,7 +2,7 @@
 
 <link rel="import" href="/elements/nearby-service.html">
 <link rel="import" href="/elements/cnm-station.html">
-<link rel="import" href="/elements/cnm-footer.html">
+<link rel="import" href="/elements/cnm-top-bar.html">
 <link rel="import" href="/elements/cnm-line-toggle.html">
 
 <polymer-element name="cnm-nearby">
@@ -25,6 +25,10 @@
       on-loaded-data="{{loadedData}}">
     </nearby-service>
 
+    <cnm-top-bar show_refresh="true" on-refresh="{{load}}">
+      <cnm-line-toggle stations="{{stations}}" on-toggle="{{linesToggled}}"></cnm-line-toggle>
+    </cnm-top-bar>
+
     <template if="{{state == 'loaded'}}">
       <div layout vertical center>
         <template repeat="{{station in stations}}">
@@ -45,8 +49,6 @@
       </div>
     </template>
 
-    <cnm-footer on-refresh="{{load}}"></cnm-footer>
-    <cnm-line-toggle stations="{{stations}}" on-toggle="{{linesToggled}}"></cnm-line-toggle>
 
   </template>
   <script>

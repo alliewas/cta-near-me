@@ -6,11 +6,6 @@
     <style>
     :host {
       display: block;
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      width: 135px;
-      background: rgba(0, 0, 0, 0.8);
     }
 
     .toggle {
@@ -31,11 +26,11 @@
     }
     </style>
 
-    <div layout horizontal wrap center>
+    <div layout horizontal wrap center center-justified>
       <template if="{{lines && lines.length > 1}}">
         <template repeat="{{line in lines}}">
           <div id="{{line}}" class="toggle line-{{line}} {{disabledLines[line]}}" on-tap="{{lineTapped}}">
-            <div class="name">{{line}}</div>
+            <div class="name"></div>
           </div>
         </template>
       </template>

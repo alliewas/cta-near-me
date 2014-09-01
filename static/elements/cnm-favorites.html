@@ -2,7 +2,7 @@
 
 <link rel="import" href="/elements/favorite-service.html">
 <link rel="import" href="/elements/stops-service.html">
-<link rel="import" href="/elements/cnm-footer.html">
+<link rel="import" href="/elements/cnm-top-bar.html">
 
 <polymer-element name="cnm-favorites">
   <template>
@@ -27,6 +27,7 @@
     </stops-service>
 
     <template if="{{state == 'loaded'}}">
+      <cnm-top-bar show_refresh="true" on-refresh="{{load}}"></cnm-top-bar>
       <div layout vertical center>
         <template repeat="{{station in stations}}">
           <cnm-station station="{{station}}" favorites="true"></cnm-station>
@@ -45,9 +46,6 @@
         Loading Data...
       </div>
     </template>
-
-    <cnm-footer on-refresh="{{load}}"></cnm-footer>
-
   </template>
   <script>
   Polymer("cnm-favorites", {
