@@ -100,17 +100,10 @@
     shortTime: function(value) {
       if (value) {
         var d = new Date(value);
-        var hours = d.getHours();
-        var ampm = "AM";
-        if (hours > 12) {
-          hours -= 12;
-          ampm = "PM";
-        }
-        var minutes = d.getMinutes();
-        if (minutes < 10) {
-          minutes = "0" + minutes;
-        }
-        return hours + ":" + minutes + " " + ampm;
+        return d.toLocaleTimeString("en", {
+          hour: "numeric",
+          minute: "2-digit"
+        });
       }
     },
     chooseFavoriteIcon: function(stop) {
