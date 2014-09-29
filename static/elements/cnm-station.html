@@ -22,7 +22,7 @@
       <div layout horizontal center class="station">
         <span class="name">{{station.Name}}</span>
         <div flex></div>
-        <span class="distance">{{station.Kilometers | kmToMiles | toFixed(2)}} mi</span>
+        <span class="distance">{{station.Kilometers | kmToMiles | toFixed(1)}} mi</span>
       </div>
       <template repeat="{{stop in station.StopArrivals}}">
         <cnm-stop stop="{{stop}}" favorites="{{favorites}}" hiddenLines="{{hiddenLines}}"></cnm-stop>
