@@ -67,6 +67,9 @@
                 </template>
                 <hr class="line-{{stop.LineKey}}">
                 {{arrival.ArrivingAt | shortTime}}
+                <template if="{{arrival.IsDelayed}}">
+                  *
+                </template>
               </div>
             </template>
           </div>
