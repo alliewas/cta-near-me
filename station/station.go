@@ -311,7 +311,7 @@ func init() {
 		41400: Station{41400, "Roosevelt", -87.62659, 41.867405,
 				[]Stop{
 					Stop{30269, "Red", "N", "Roosevelt/State (Howard-bound)"},
-					Stop{30270, "Red", "S", "Roosevelt/State (Howard-bound)"},
+					Stop{30270, "Red", "S", "Roosevelt/State (95th-bound)"},
 					Stop{30080, "G", "N", "Roosevelt/Wabash (Loop-Harlem-bound)"},
 					Stop{30081, "G", "S", "Roosevelt/Wabash (Midway-63rd-bound)"},
 					Stop{30080, "Org", "N", "Roosevelt/Wabash (Loop-Harlem-bound)"},
