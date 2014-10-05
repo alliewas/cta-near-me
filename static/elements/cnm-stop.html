@@ -107,10 +107,21 @@
     shortTime: function(value) {
       if (value) {
         var d = new Date(value);
-        return d.toLocaleTimeString("en", {
-          hour: "numeric",
-          minute: "2-digit"
-        });
+        var hours = d.getHours();
+        var ampm = "PM";
+        if (hours < 12) {
+          ampm = "AM";
+        }
+        if (hours == 0) {
+          hours += 12;
+        } else if (hours > 12) {
+          hours -= 12;
+        }
+        var minutes = d.getMinutes();
+        if (minutes < 10) {
+          minutes = "0" + minutes;
+        }
+        return hours + ":" + minutes + " " + ampm;
       }
     },
     chooseFavoriteIcon: function(stop) {
