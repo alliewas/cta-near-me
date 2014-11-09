@@ -3,7 +3,7 @@
 <head>
   <title>paper-checkbox</title>
   
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   
@@ -16,7 +16,8 @@
   
     body {
       font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
-      padding: 20px;
+      margin: 0;
+      padding: 24px;
       -webkit-user-select: none;
       -moz-user-select: none;
       -ms-user-select: none;
@@ -26,12 +27,11 @@
     }
     
     paper-checkbox {
-      padding: 20px;
+      padding: 20px 20px 20px 0;
     }
     
     section {
       width: 300px;
-      padding: 20px;
     }
     
     paper-checkbox.blue::shadow #ink[checked] {

@@ -26,7 +26,8 @@ func main() {
 	http.Handle("/", router)
 
     port := config.Get().Host.Port
-	http.ListenAndServe(port, nil)
+	log.Printf("Serving on port %v", port)
+	log.Fatal(http.ListenAndServe(port, nil))
 }
 
 var indexTemplate = template.Must(template.ParseFiles(fmt.Sprintf("%s/template/index.html", config.Get().Host.Path)))
