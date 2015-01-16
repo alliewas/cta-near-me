@@ -1,0 +1,206 @@
+html,body {
+  height: 100%;
+  margin: 0;
+  background-color: white;
+  font-family: 'Open Sans', sans-serif;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+/* This is needed for Safari to click buttons with SVG icons. */
+svg {
+  pointer-events: none;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+.center {
+  height: 100vh;
+
+  display: -ms-flexbox;
+  -mx-box-orient: vertical;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+
+  -webkit-flex-wrap: nowrap;
+  -moz-flex-wrap: nowrap;
+  -ms-flex-direction: nowrap;
+  flex-wrap: nowrap;
+
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+}
+
+.row {
+  display: -ms-flexbox;
+  -mx-box-orient: horizontal;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+
+  -webkit-flex-direction: row;
+  -moz-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+
+  -webkit-flex-wrap: nowrap;
+  -moz-flex-wrap: nowrap;
+  -ms-flex-direction: nowrap;
+  flex-wrap: nowrap;
+}
+
+.row.split {
+  -webkit-justify-content: space-between;
+  -moz-justify-content: space-between;
+  -ms-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+}
+
+.tabs {
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+}
+
+.tabs .tab {
+  width: 30vw;
+  height: 60px;
+  margin-left: 5px;
+  margin-right: 5px;
+  background-color: #BBBBBB;
+
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+}
+
+.tabs .tab.selected {
+  background-color: #EEEEEE;
+  border-bottom: 8px solid black;
+}
+
+.tabs .tab .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.tabs .tab .icon .inner {
+  fill: #888888;
+}
+
+.tabs .tab .icon .selected {
+  fill: black;
+}
+
+.station .row .name {
+  font-size: 18pt;
+  font-weight: bold;
+}
+
+.row.end {
+  -webkit-justify-content: flex-end;
+  -moz-justify-content: flex-end;
+  -ms-justify-content: flex-end;
+  justify-content: flex-end;
+}
+
+.arrivals {
+  width: 100vw;
+  overflow-x: auto;
+}
+
+.arrivals .arrival {
+  width: 30vw;
+  padding: 0.2em;
+  margin: 0.2em;
+  text-align: center;
+  -webkit-flex-shrink: 0;
+  -moz-flex-shrink: 0;
+  -ms-flex-shrink: 0;
+  flex-shrink: 0;
+}
+
+.arrivals .arrival hr {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+  width: 80%;
+}
+
+.lines .line {
+  padding: 6px 10px 3px;
+  margin-bottom: 10px;
+  font-weight: 300;
+  font-size: 24pt;
+}
+
+.stop .line {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  color: white;
+  font-size: 14px;
+}
+
+.stop .line.line-Y {
+  color: black;
+}
+
+.notFavorite {
+  fill: #CCCCCC;
+}
+
+.isFavorite {
+  fill: yellow;
+}
+
+.lineToggle {
+  border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  margin: 2px;
+}
