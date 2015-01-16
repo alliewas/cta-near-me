@@ -13,12 +13,35 @@ There are apps that do this on iOS, and apps that do this on Android. But they a
 
 # Decisions
 
-The app itself is written in Polymer. All the Polymer app does is look good and make requests to the server.
+The app itself is written in React. All the React app does is look good and make requests to the server.
 
 The server is written in Go. It serves the Javascript and provides a JSON API that enables some interesting features:
 
 - A single request to our server results in many requests to the CTA API -- we minimize the number of requests and amount of mobile data your device uses
 - Caches results -- if someone else uses the app near the same time and place as you, you don't have to wait for fresh data from the CTA
+
+# Development
+
+Compile and run the server:
+
+```
+go build
+./cta-near-me
+```
+
+Keep the JSX building:
+
+```
+./watch-jsx.sh
+```
+
+Keep the app building:
+
+```
+./watch-build.sh
+```
+
+**Note:** You'll need to run all three of those in separate Terminals, since they run in the foreground.
 
 # Deployment
 
