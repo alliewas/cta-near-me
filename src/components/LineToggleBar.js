@@ -1,5 +1,6 @@
 var LineToggle = require("./LineToggle.js");
 var ArrayUtil = require("../util/ArrayUtil.js");
+var FavoriteStore = require("../stores/FavoriteStore.js");
 
 var LineToggleBar = React.createClass({
   render: function() {
@@ -7,9 +8,11 @@ var LineToggleBar = React.createClass({
     var lines = [];
     stations.forEach(function(station) {
       station.StopArrivals.forEach(function(stop) {
-        lines.push(stop.LineKey);
-      });
-    });
+        if (!this.props.onlyFavorites || FavoriteStore.isFavorite(stop)) {
+          lines.push(stop.LineKey);
+        }
+      }.bind(this));
+    }.bind(this));
     lines = ArrayUtil.unique(lines);
     return (
       <div className="lineToggleBar row">

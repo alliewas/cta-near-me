@@ -379,7 +379,7 @@ var Favorites = React.createClass({displayName: 'Favorites',
         React.createElement("div", null, 
           React.createElement("div", {className: "row split"}, 
             React.createElement("button", {className: "hidden"}, React.createElement(Icon, {icon: "reload"})), 
-            React.createElement(LineToggleBar, {stations: this.state.stations}), 
+            React.createElement(LineToggleBar, {stations: this.state.stations, onlyFavorites: true}), 
             React.createElement("button", {className: "refresh", onClick: this._load}, React.createElement(Icon, {icon: "reload"}))
           ), 
           React.createElement(Stations, {stations: this.state.stations, onlyFavorites: true})
@@ -528,6 +528,7 @@ module.exports = LineToggle;
 },{"../actions/Actions.js":1,"../stores/LineToggleStore.js":30}],16:[function(require,module,exports){
 var LineToggle = require("./LineToggle.js");
 var ArrayUtil = require("../util/ArrayUtil.js");
+var FavoriteStore = require("../stores/FavoriteStore.js");
 
 var LineToggleBar = React.createClass({displayName: 'LineToggleBar',
   render: function() {
@@ -535,9 +536,11 @@ var LineToggleBar = React.createClass({displayName: 'LineToggleBar',
     var lines = [];
     stations.forEach(function(station) {
       station.StopArrivals.forEach(function(stop) {
-        lines.push(stop.LineKey);
-      });
-    });
+        if (!this.props.onlyFavorites || FavoriteStore.isFavorite(stop)) {
+          lines.push(stop.LineKey);
+        }
+      }.bind(this));
+    }.bind(this));
     lines = ArrayUtil.unique(lines);
     return (
       React.createElement("div", {className: "lineToggleBar row"}, 
@@ -553,7 +556,7 @@ var LineToggleBar = React.createClass({displayName: 'LineToggleBar',
 
 module.exports = LineToggleBar;
 
-},{"../util/ArrayUtil.js":35,"./LineToggle.js":15}],17:[function(require,module,exports){
+},{"../stores/FavoriteStore.js":28,"../util/ArrayUtil.js":35,"./LineToggle.js":15}],17:[function(require,module,exports){
 var LinesApi = require("../api/LinesApi.js");
 var LineStore = require("../stores/LineStore.js");
 var LocationStore = require("../stores/LocationStore.js");
