@@ -1,4 +1,3 @@
-console.log("FavoriteStore");
 var Store = require("./Store.js");
 var Dispatcher = require("../dispatcher/Dispatcher.js");
 

@@ -4,7 +4,7 @@ var Actions = require("../actions/Actions.js");
 var LineToggle = React.createClass({
   getInitialState: function() {
     return {
-      isDisabled: LineToggleStore.isDisabled(this.props.line)
+      isEnabled: LineToggleStore.isEnabled(this.props.line)
     };
   },
   componentDidMount: function() {
@@ -20,16 +20,16 @@ var LineToggle = React.createClass({
   },
   toggle: function() {
     var line = this.props.line;
-    if (this.state.isDisabled) {
-      Actions.enableLine(line);
-    } else {
+    if (this.state.isEnabled) {
       Actions.disableLine(line);
+    } else {
+      Actions.enableLine(line);
     }
   },
   render: function() {
     var line = this.props.line;
     var className = "lineToggle line-" + line;
-    if (this.state.isDisabled) {
+    if (!this.state.isEnabled) {
       className += " disabled";
     }
     return (

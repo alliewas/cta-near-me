@@ -1,19 +1,25 @@
 var LineToggle = require("./LineToggle.js");
-var ArrayUtil = require("../util/ArrayUtil.js");
-var FavoriteStore = require("../stores/FavoriteStore.js");
+var LineToggleStore = require("../stores/LineToggleStore.js");
 
 var LineToggleBar = React.createClass({
+  getInitialState: function() {
+    return {
+      lines: LineToggleStore.lines()
+    };
+  },
+  componentDidMount: function() {
+    LineToggleStore.addChangeListener(this._onChange);
+  },
+  componentWillUnmount: function() {
+    LineToggleStore.removeChangeListener(this._onChange);
+  },
+  _onChange: function() {
+    if (this.isMounted()) {
+      this.setState(this.getInitialState());
+    }
+  },
   render: function() {
-    var stations = this.props.stations;
-    var lines = [];
-    stations.forEach(function(station) {
-      station.StopArrivals.forEach(function(stop) {
-        if (!this.props.onlyFavorites || FavoriteStore.isFavorite(stop)) {
-          lines.push(stop.LineKey);
-        }
-      }.bind(this));
-    }.bind(this));
-    lines = ArrayUtil.unique(lines);
+    var lines = this.state.lines;
     return (
       <div className="lineToggleBar row">
         {lines && (lines.length > 1) && lines.map(function(line, index) {

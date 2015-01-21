@@ -8,12 +8,12 @@ var Stop = React.createClass({
   getInitialState: function() {
     return {
       isFavorite: FavoriteStore.isFavorite(this.props.stop),
-      isDisabled: LineToggleStore.isDisabled(this.props.stop.LineKey)
+      isEnabled: LineToggleStore.isEnabled(this.props.stop.LineKey)
     };
   },
   componentDidMount: function() {
     FavoriteStore.addChangeListener(this._onChange);
-    LineToggleStore.addChangeListener(this._onChange);
+    LineToggleStore.addChangeListener(this._onChange, "Stop " + this.props.stop.Name);
   },
   componentWillUnmount: function() {
     FavoriteStore.removeChangeListener(this._onChange);
@@ -40,7 +40,7 @@ var Stop = React.createClass({
       favIcon = "notFavorite";
     }
     var lineClass = "row split line line-" + stop.LineKey;
-    if (!this.state.isDisabled && (!this.props.onlyFavorites || this.state.isFavorite)) {
+    if (this.state.isEnabled && (!this.props.onlyFavorites || this.state.isFavorite)) {
       return (
         <div className="stop">
           <div className={lineClass}>

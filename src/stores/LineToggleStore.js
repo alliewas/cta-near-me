@@ -1,11 +1,25 @@
 var Store = require("./Store.js");
 var Dispatcher = require("../dispatcher/Dispatcher.js");
+var ArrayUtil = require("../util/ArrayUtil.js");
+var LineStore = require("./LineStore.js");
 
-var disabledLines = {};
+var enabledLines = {};
+
+function setLines(stations, enabled) {
+  enabledLines = {};
+  stations.forEach(function(station) {
+    station.StopArrivals.forEach(function(stop) {
+      enabledLines[stop.LineKey] = enabled;
+    });
+  });
+}
 
 var LineToggleStore = $.extend({
-  isDisabled: function(line) {
-    return disabledLines[line];
+  lines: function() {
+    return ArrayUtil.unique(Object.keys(enabledLines));
+  },
+  isEnabled: function(line) {
+    return enabledLines[line];
   }
 }, Store());
 
@@ -13,13 +27,21 @@ Dispatcher.register(function(action) {
   switch (action.type) {
     case "SWITCH_TAB":
     case "CHOOSE_LINE":
-      disabledLines = {};
+      enabledLines = {};
       break;
     case "DISABLE_LINE":
-      disabledLines[action.line] = true;
+      enabledLines[action.line] = false;
       break;
     case "ENABLE_LINE":
-      disabledLines[action.line] = false;
+      enabledLines[action.line] = true;
+      break;
+    case "GOT_NEARBY_STATIONS":
+    case "GOT_STOPS":
+      setLines(action.stations, true);
+      break;
+    case "GOT_STATION":
+      setLines([action.station], false);
+      enabledLines[LineStore.currentLine().Key] = true;
       break;
     default: return;
   }

@@ -3,131 +3,131 @@ var Dispatcher = require("../dispatcher/Dispatcher.js");
 
 var Actions = {
   switchTab: function(tab) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "SWITCH_TAB",
       tab: tab
     });
   },
   loadingLocation: function() {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "LOADING_LOCATION"
     });
   },
   gotLocation: function(latitude, longitude) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "GOT_LOCATION",
       latitude: latitude,
       longitude: longitude
     });
   },
   locationFailed: function(msg) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "LOCATION_FAILED",
       msg: msg
     });
   },
   locationUnavailable: function() {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "LOCATION_UNAVAILABLE"
     });
   },
   loadingNearbyStations: function() {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "LOADING_NEARBY_STATIONS"
     });
   },
   gotNearbyStations: function(stations) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "GOT_NEARBY_STATIONS",
       stations: stations
     });
   },
   loadingLines: function() {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "LOADING_LINES"
     });
   },
   gotLines: function(lines) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "GOT_LINES",
       lines: lines
     });
   },
   chooseLine: function(line) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "CHOOSE_LINE",
       line: line
     });
   },
   loadingStations: function() {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "LOADING_STATIONS"
     });
   },
   gotStations: function(stations) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "GOT_STATIONS",
       stations: stations
     });
   },
   chooseStation: function(station) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "CHOOSE_STATION",
       station: station
     });
   },
   loadingStation: function() {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "LOADING_STATION"
     });
   },
   gotStation: function(station) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "GOT_STATION",
       station: station
     });
   },
   backToLines: function() {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "BACK_TO_LINES"
     });
   },
   backToLine: function() {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "BACK_TO_LINE"
     });
   },
   loadingStops: function() {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "LOADING_STOPS"
     });
   },
   gotStops: function(stations) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "GOT_STOPS",
       stations: stations
     });
   },
   addFavorite: function(stop) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "ADD_FAVORITE",
       stop: stop
     });
   },
   removeFavorite: function(stop) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "REMOVE_FAVORITE",
       stop: stop
     });
   },
   enableLine: function(line) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "ENABLE_LINE",
       line: line
     });
   },
   disableLine: function(line) {
-    Dispatcher.handleAction({
+    Dispatcher.dispatch({
       type: "DISABLE_LINE",
       line: line
     });
@@ -489,7 +489,7 @@ var Actions = require("../actions/Actions.js");
 var LineToggle = React.createClass({displayName: 'LineToggle',
   getInitialState: function() {
     return {
-      isDisabled: LineToggleStore.isDisabled(this.props.line)
+      isEnabled: LineToggleStore.isEnabled(this.props.line)
     };
   },
   componentDidMount: function() {
@@ -505,16 +505,16 @@ var LineToggle = React.createClass({displayName: 'LineToggle',
   },
   toggle: function() {
     var line = this.props.line;
-    if (this.state.isDisabled) {
-      Actions.enableLine(line);
-    } else {
+    if (this.state.isEnabled) {
       Actions.disableLine(line);
+    } else {
+      Actions.enableLine(line);
     }
   },
   render: function() {
     var line = this.props.line;
     var className = "lineToggle line-" + line;
-    if (this.state.isDisabled) {
+    if (!this.state.isEnabled) {
       className += " disabled";
     }
     return (
@@ -527,21 +527,27 @@ module.exports = LineToggle;
 
 },{"../actions/Actions.js":1,"../stores/LineToggleStore.js":30}],16:[function(require,module,exports){
 var LineToggle = require("./LineToggle.js");
-var ArrayUtil = require("../util/ArrayUtil.js");
-var FavoriteStore = require("../stores/FavoriteStore.js");
+var LineToggleStore = require("../stores/LineToggleStore.js");
 
 var LineToggleBar = React.createClass({displayName: 'LineToggleBar',
+  getInitialState: function() {
+    return {
+      lines: LineToggleStore.lines()
+    };
+  },
+  componentDidMount: function() {
+    LineToggleStore.addChangeListener(this._onChange);
+  },
+  componentWillUnmount: function() {
+    LineToggleStore.removeChangeListener(this._onChange);
+  },
+  _onChange: function() {
+    if (this.isMounted()) {
+      this.setState(this.getInitialState());
+    }
+  },
   render: function() {
-    var stations = this.props.stations;
-    var lines = [];
-    stations.forEach(function(station) {
-      station.StopArrivals.forEach(function(stop) {
-        if (!this.props.onlyFavorites || FavoriteStore.isFavorite(stop)) {
-          lines.push(stop.LineKey);
-        }
-      }.bind(this));
-    }.bind(this));
-    lines = ArrayUtil.unique(lines);
+    var lines = this.state.lines;
     return (
       React.createElement("div", {className: "lineToggleBar row"}, 
         lines && (lines.length > 1) && lines.map(function(line, index) {
@@ -556,7 +562,7 @@ var LineToggleBar = React.createClass({displayName: 'LineToggleBar',
 
 module.exports = LineToggleBar;
 
-},{"../stores/FavoriteStore.js":28,"../util/ArrayUtil.js":35,"./LineToggle.js":15}],17:[function(require,module,exports){
+},{"../stores/LineToggleStore.js":30,"./LineToggle.js":15}],17:[function(require,module,exports){
 var LinesApi = require("../api/LinesApi.js");
 var LineStore = require("../stores/LineStore.js");
 var LocationStore = require("../stores/LocationStore.js");
@@ -909,12 +915,12 @@ var Stop = React.createClass({displayName: 'Stop',
   getInitialState: function() {
     return {
       isFavorite: FavoriteStore.isFavorite(this.props.stop),
-      isDisabled: LineToggleStore.isDisabled(this.props.stop.LineKey)
+      isEnabled: LineToggleStore.isEnabled(this.props.stop.LineKey)
     };
   },
   componentDidMount: function() {
     FavoriteStore.addChangeListener(this._onChange);
-    LineToggleStore.addChangeListener(this._onChange);
+    LineToggleStore.addChangeListener(this._onChange, "Stop " + this.props.stop.Name);
   },
   componentWillUnmount: function() {
     FavoriteStore.removeChangeListener(this._onChange);
@@ -941,7 +947,7 @@ var Stop = React.createClass({displayName: 'Stop',
       favIcon = "notFavorite";
     }
     var lineClass = "row split line line-" + stop.LineKey;
-    if (!this.state.isDisabled && (!this.props.onlyFavorites || this.state.isFavorite)) {
+    if (this.state.isEnabled && (!this.props.onlyFavorites || this.state.isFavorite)) {
       return (
         React.createElement("div", {className: "stop"}, 
           React.createElement("div", {className: lineClass}, 
@@ -978,24 +984,229 @@ var Stops = React.createClass({displayName: 'Stops',
 module.exports = Stops;
 
 },{"./Stop.js":25}],27:[function(require,module,exports){
-var _callbacks = [];
+/*
+ * Copyright (c) 2014, Facebook, Inc.
+ * All rights reserved.
+ *
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ *
+ * @providesModule Dispatcher
+ * @typechecks
+ */
 
-var Dispatcher = {
-  handleAction: function(action) {
-    console.log("Action", action);
-    _callbacks.forEach(function(callback) {
-      callback.call(null, action);
-    });
-  },
-  register: function(callback) {
-    _callbacks.push(callback);
+"use strict";
+
+var _lastID = 1;
+var _prefix = 'ID_';
+
+/**
+ * Dispatcher is used to broadcast payloads to registered callbacks. This is
+ * different from generic pub-sub systems in two ways:
+ *
+ *   1) Callbacks are not subscribed to particular events. Every payload is
+ *      dispatched to every registered callback.
+ *   2) Callbacks can be deferred in whole or part until other callbacks have
+ *      been executed.
+ *
+ * For example, consider this hypothetical flight destination form, which
+ * selects a default city when a country is selected:
+ *
+ *   var flightDispatcher = new Dispatcher();
+ *
+ *   // Keeps track of which country is selected
+ *   var CountryStore = {country: null};
+ *
+ *   // Keeps track of which city is selected
+ *   var CityStore = {city: null};
+ *
+ *   // Keeps track of the base flight price of the selected city
+ *   var FlightPriceStore = {price: null}
+ *
+ * When a user changes the selected city, we dispatch the payload:
+ *
+ *   flightDispatcher.dispatch({
+ *     actionType: 'city-update',
+ *     selectedCity: 'paris'
+ *   });
+ *
+ * This payload is digested by `CityStore`:
+ *
+ *   flightDispatcher.register(function(payload) {
+ *     if (payload.actionType === 'city-update') {
+ *       CityStore.city = payload.selectedCity;
+ *     }
+ *   });
+ *
+ * When the user selects a country, we dispatch the payload:
+ *
+ *   flightDispatcher.dispatch({
+ *     actionType: 'country-update',
+ *     selectedCountry: 'australia'
+ *   });
+ *
+ * This payload is digested by both stores:
+ *
+ *    CountryStore.dispatchToken = flightDispatcher.register(function(payload) {
+ *     if (payload.actionType === 'country-update') {
+ *       CountryStore.country = payload.selectedCountry;
+ *     }
+ *   });
+ *
+ * When the callback to update `CountryStore` is registered, we save a reference
+ * to the returned token. Using this token with `waitFor()`, we can guarantee
+ * that `CountryStore` is updated before the callback that updates `CityStore`
+ * needs to query its data.
+ *
+ *   CityStore.dispatchToken = flightDispatcher.register(function(payload) {
+ *     if (payload.actionType === 'country-update') {
+ *       // `CountryStore.country` may not be updated.
+ *       flightDispatcher.waitFor([CountryStore.dispatchToken]);
+ *       // `CountryStore.country` is now guaranteed to be updated.
+ *
+ *       // Select the default city for the new country
+ *       CityStore.city = getDefaultCityForCountry(CountryStore.country);
+ *     }
+ *   });
+ *
+ * The usage of `waitFor()` can be chained, for example:
+ *
+ *   FlightPriceStore.dispatchToken =
+ *     flightDispatcher.register(function(payload) {
+ *       switch (payload.actionType) {
+ *         case 'country-update':
+ *         case 'city-update':
+ *           flightDispatcher.waitFor([CityStore.dispatchToken]);
+ *           FlightPriceStore.price =
+ *             getFlightPriceStore(CountryStore.country, CityStore.city);
+ *           break;
+ *     }
+ *   });
+ *
+ * The `country-update` payload will be guaranteed to invoke the stores'
+ * registered callbacks in order: `CountryStore`, `CityStore`, then
+ * `FlightPriceStore`.
+ */
+function Dispatcher() {
+  this._callbacks = {};
+  this._isPending = {};
+  this._isHandled = {};
+  this._isDispatching = false;
+  this._pendingPayload = null;
+}
+
+  /**
+   * Registers a callback to be invoked with every dispatched payload. Returns
+   * a token that can be used with `waitFor()`.
+   *
+   * @param {function} callback
+   * @return {string}
+   */
+Dispatcher.prototype.register = function(callback) {
+  var id = _prefix + _lastID++;
+  this._callbacks[id] = callback;
+  return id;
+}
+
+  /**
+   * Removes a callback based on its token.
+   *
+   * @param {string} id
+   */
+Dispatcher.prototype.unregister = function(id) {
+  delete this._callbacks[id];
+}
+
+  /**
+   * Waits for the callbacks specified to be invoked before continuing execution
+   * of the current callback. This method should only be used by a callback in
+   * response to a dispatched payload.
+   *
+   * @param {array<string>} ids
+   */
+Dispatcher.prototype.waitFor = function(ids) {
+  for (var ii = 0; ii < ids.length; ii++) {
+    var id = ids[ii];
+    if (this._isPending[id]) {
+      continue;
+    }
+    this._invokeCallback(id);
   }
-};
+}
 
-module.exports = Dispatcher;
+  /**
+   * Dispatches a payload to all registered callbacks.
+   *
+   * @param {object} payload
+   */
+Dispatcher.prototype.dispatch = function(payload) {
+  console.log(payload);
+  this._startDispatching(payload);
+  try {
+    for (var id in this._callbacks) {
+      if (this._isPending[id]) {
+        continue;
+      }
+      this._invokeCallback(id);
+    }
+  } finally {
+    this._stopDispatching();
+  }
+}
+
+  /**
+   * Is this Dispatcher currently dispatching.
+   *
+   * @return {boolean}
+   */
+Dispatcher.prototype.isDispatching = function() {
+  return this._isDispatching;
+}
+
+  /**
+   * Call the callback stored with the given id. Also do some internal
+   * bookkeeping.
+   *
+   * @param {string} id
+   * @internal
+   */
+Dispatcher.prototype._invokeCallback = function(id) {
+  this._isPending[id] = true;
+  this._callbacks[id](this._pendingPayload);
+  this._isHandled[id] = true;
+}
+
+  /**
+   * Set up bookkeeping needed when dispatching.
+   *
+   * @param {object} payload
+   * @internal
+   */
+Dispatcher.prototype._startDispatching = function(payload) {
+  for (var id in this._callbacks) {
+    this._isPending[id] = false;
+    this._isHandled[id] = false;
+  }
+  this._pendingPayload = payload;
+  this._isDispatching = true;
+}
+
+  /**
+   * Clear bookkeeping used for dispatching.
+   *
+   * @internal
+   */
+Dispatcher.prototype._stopDispatching = function() {
+  this._pendingPayload = null;
+  this._isDispatching = false;
+}
+
+var singleDispatcher = new Dispatcher();
+
+module.exports = singleDispatcher;
 
 },{}],28:[function(require,module,exports){
-console.log("FavoriteStore");
 var Store = require("./Store.js");
 var Dispatcher = require("../dispatcher/Dispatcher.js");
 
@@ -1171,12 +1382,26 @@ module.exports = LineStore;
 },{"../api/StationApi.js":4,"../api/StationsApi.js":5,"../dispatcher/Dispatcher.js":27,"./LocationStore.js":31,"./Store.js":33}],30:[function(require,module,exports){
 var Store = require("./Store.js");
 var Dispatcher = require("../dispatcher/Dispatcher.js");
+var ArrayUtil = require("../util/ArrayUtil.js");
+var LineStore = require("./LineStore.js");
 
-var disabledLines = {};
+var enabledLines = {};
+
+function setLines(stations, enabled) {
+  enabledLines = {};
+  stations.forEach(function(station) {
+    station.StopArrivals.forEach(function(stop) {
+      enabledLines[stop.LineKey] = enabled;
+    });
+  });
+}
 
 var LineToggleStore = $.extend({
-  isDisabled: function(line) {
-    return disabledLines[line];
+  lines: function() {
+    return ArrayUtil.unique(Object.keys(enabledLines));
+  },
+  isEnabled: function(line) {
+    return enabledLines[line];
   }
 }, Store());
 
@@ -1184,13 +1409,21 @@ Dispatcher.register(function(action) {
   switch (action.type) {
     case "SWITCH_TAB":
     case "CHOOSE_LINE":
-      disabledLines = {};
+      enabledLines = {};
       break;
     case "DISABLE_LINE":
-      disabledLines[action.line] = true;
+      enabledLines[action.line] = false;
       break;
     case "ENABLE_LINE":
-      disabledLines[action.line] = false;
+      enabledLines[action.line] = true;
+      break;
+    case "GOT_NEARBY_STATIONS":
+    case "GOT_STOPS":
+      setLines(action.stations, true);
+      break;
+    case "GOT_STATION":
+      setLines([action.station], false);
+      enabledLines[LineStore.currentLine().Key] = true;
       break;
     default: return;
   }
@@ -1199,7 +1432,7 @@ Dispatcher.register(function(action) {
 
 module.exports = LineToggleStore;
 
-},{"../dispatcher/Dispatcher.js":27,"./Store.js":33}],31:[function(require,module,exports){
+},{"../dispatcher/Dispatcher.js":27,"../util/ArrayUtil.js":35,"./LineStore.js":29,"./Store.js":33}],31:[function(require,module,exports){
 var Store = require("./Store.js");
 var Dispatcher = require("../dispatcher/Dispatcher.js");
 
@@ -1285,20 +1518,53 @@ module.exports = NearbyStore;
  */
 var Store = function() {
   return {
+    _adding: false,
+    _removing: false,
+    _emitting: false,
     _listeners: [],
-    emitChange: function() {
-      this._listeners.forEach(function(listener) {
-        listener.call(null);
-      });
+    _names: [],
+    isBusy: function() {
+      return this._emitting || this._adding || this._removing;
     },
-    addChangeListener: function(listener) {
+    emitChange: function() {
+      if (this.isBusy()) {
+        setTimeout(function() {
+          this.emitChange();
+        }.bind(this), 50);
+        return;
+      }
+      this._emitting = true;
+      this._listeners.forEach(function(listener, index) {
+        listener.call(null);
+      }.bind(this));
+      this._emitting = false;
+    },
+    addChangeListener: function(listener, name) {
+      if (this.isBusy()) {
+        setTimeout(function() {
+          this.addChangeListener(listener, name);
+        }.bind(this), 50);
+        return;
+      }
+      this._adding = true;
       this._listeners.push(listener);
+      this._names.push(name);
+      this._adding = false;
     },
     removeChangeListener: function(listener) {
+      if (this.isBusy()) {
+        setTimeout(function() {
+          this.removeChangeListener(listener);
+        }.bind(this), 50);
+        return;
+      }
+      this._removing = true;
       var index = this._listeners.indexOf(listener);
       if (index != -1) {
         this._listeners.splice(index, 1);
+        this._names.splice(index, 1);
       }
+      this._removing = false;
     }
   };
 };
