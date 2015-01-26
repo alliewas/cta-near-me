@@ -2,14 +2,17 @@ var Store = require("./Store.js");
 var Dispatcher = require("../dispatcher/Dispatcher.js");
 var ArrayUtil = require("../util/ArrayUtil.js");
 var LineStore = require("./LineStore.js");
+var FavoriteStore = require("./FavoriteStore.js");
 
 var enabledLines = {};
 
-function setLines(stations, enabled) {
+function setLines(stations, enabled, favoritesOnly) {
   enabledLines = {};
   stations.forEach(function(station) {
     station.StopArrivals.forEach(function(stop) {
-      enabledLines[stop.LineKey] = enabled;
+      if (!favoritesOnly || FavoriteStore.isFavorite(stop)) {
+        enabledLines[stop.LineKey] = enabled;
+      }
     });
   });
 }
@@ -36,8 +39,10 @@ Dispatcher.register(function(action) {
       enabledLines[action.line] = true;
       break;
     case "GOT_NEARBY_STATIONS":
-    case "GOT_STOPS":
       setLines(action.stations, true);
+      break;
+    case "GOT_STOPS":
+      setLines(action.stations, true, true);
       break;
     case "GOT_STATION":
       setLines([action.station], false);
