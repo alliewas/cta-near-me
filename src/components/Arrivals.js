@@ -5,7 +5,7 @@ var Arrivals = React.createClass({
     var stop = this.props.stop;
     return (
       <div className="arrivals row">
-        {this.props.arrivals.map(function(arrival, index) {
+        {this.props.arrivals.slice(0,3).map(function(arrival, index) {
           return <Arrival key={index} stop={stop} arrival={arrival} />;
         })}
       </div>
