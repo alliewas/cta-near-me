@@ -7,8 +7,8 @@ var Icon = require("./Icon.js");
 var Stop = React.createClass({
   getInitialState: function() {
     return {
-      isFavorite: FavoriteStore.isFavorite(this.props.stop),
-      isEnabled: LineToggleStore.isEnabled(this.props.stop.LineKey)
+      isFavorite: FavoriteStore.state.isFavorite(this.props.stop),
+      isEnabled: LineToggleStore.state.isEnabled(this.props.stop.LineKey)
     };
   },
   componentDidMount: function() {

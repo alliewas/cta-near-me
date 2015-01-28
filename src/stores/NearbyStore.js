@@ -5,30 +5,28 @@ var NearbyApi = require("../api/NearbyApi.js");
 var loading = false;
 var stations = [];
 
-var NearbyStore = $.extend({
-  loading: function() {
-    return loading;
+var NearbyStore = new Store({
+  state: {
+    loading: function() {
+      return loading;
+    },
+    stations: function() {
+      return stations;
+    }
   },
-  stations: function() {
-    return stations;
-  }
-}, Store());
-
-Dispatcher.register(function(action) {
-  switch (action.type) {
-    case "GOT_LOCATION":
+  handlers: {
+    "GOT_LOCATION": function(action) {
+      console.log("Nearby.gotLocation");
       NearbyApi.load(action.latitude, action.longitude);
-      break;
-    case "LOADING_NEARBY_STATIONS":
+    },
+    "LOADING_NEARBY_STATIONS": function() {
       loading = true;
-      break;
-    case "GOT_NEARBY_STATIONS":
+    },
+    "GOT_NEARBY_STATIONS": function(action) {
       stations = action.stations;
       loading = false;
-      break;
-    default: return;
+    }
   }
-  NearbyStore.emitChange();
 });
 
 module.exports = NearbyStore;

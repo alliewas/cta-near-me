@@ -20,7 +20,7 @@ function gotoFavorites() {
 function getState() {
   console.log("Main.getState");
   return {
-    tab: TabStore.current()
+    tab: TabStore.state.current()
   };
 }
 

@@ -10,47 +10,46 @@ function setLines(stations, enabled, favoritesOnly) {
   enabledLines = {};
   stations.forEach(function(station) {
     station.StopArrivals.forEach(function(stop) {
-      if (!favoritesOnly || FavoriteStore.isFavorite(stop)) {
+      if (!favoritesOnly || FavoriteStore.state.isFavorite(stop)) {
         enabledLines[stop.LineKey] = enabled;
       }
     });
   });
 }
 
-var LineToggleStore = $.extend({
-  lines: function() {
-    return ArrayUtil.unique(Object.keys(enabledLines));
+var LineToggleStore = new Store({
+  state: {
+    lines: function() {
+      return ArrayUtil.unique(Object.keys(enabledLines));
+    },
+    isEnabled: function(line) {
+      return enabledLines[line];
+    }
   },
-  isEnabled: function(line) {
-    return enabledLines[line];
-  }
-}, Store());
-
-Dispatcher.register(function(action) {
-  switch (action.type) {
-    case "SWITCH_TAB":
-    case "CHOOSE_LINE":
+  handlers: {
+    "SWITCH_TAB": function(action) {
       enabledLines = {};
-      break;
-    case "DISABLE_LINE":
+    },
+    "CHOOSE_LINE": function(action) {
+      enabledLines = {};
+    },
+    "DISABLE_LINE": function(action) {
       enabledLines[action.line] = false;
-      break;
-    case "ENABLE_LINE":
+    },
+    "ENABLE_LINE": function(action) {
       enabledLines[action.line] = true;
-      break;
-    case "GOT_NEARBY_STATIONS":
+    },
+    "GOT_NEARBY_STATIONS": function(action) {
       setLines(action.stations, true);
-      break;
-    case "GOT_STOPS":
+    },
+    "GOT_STOPS": function(action) {
       setLines(action.stations, true, true);
-      break;
-    case "GOT_STATION":
+    },
+    "GOT_STATION": function(action) {
       setLines([action.station], false);
-      enabledLines[LineStore.currentLine().Key] = true;
-      break;
-    default: return;
+      enabledLines[LineStore.state.currentLine().Key] = true;
+    }
   }
-  LineToggleStore.emitChange();
 });
 
 module.exports = LineToggleStore;

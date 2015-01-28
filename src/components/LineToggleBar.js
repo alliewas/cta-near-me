@@ -4,7 +4,7 @@ var LineToggleStore = require("../stores/LineToggleStore.js");
 var LineToggleBar = React.createClass({
   getInitialState: function() {
     return {
-      lines: LineToggleStore.lines()
+      lines: LineToggleStore.state.lines()
     };
   },
   componentDidMount: function() {

@@ -12,72 +12,69 @@ var stations = [];
 var loadingStation = false;
 var currentStation = null;
 
-var LineStore = $.extend({
-  loadingLines: function() {
-    return loadingLines;
+var LineStore = new Store({
+  state: {
+    loadingLines: function() {
+      return loadingLines;
+    },
+    lines: function() {
+      return lines;
+    },
+    currentLine: function() {
+      return currentLine;
+    },
+    loadingStations: function() {
+      return loadingStations;
+    },
+    stations: function() {
+      return stations;
+    },
+    loadingStation: function() {
+      return loadingStation;
+    },
+    currentStation: function() {
+      return currentStation;
+    }
   },
-  lines: function() {
-    return lines;
-  },
-  currentLine: function() {
-    return currentLine;
-  },
-  loadingStations: function() {
-    return loadingStations;
-  },
-  stations: function() {
-    return stations;
-  },
-  loadingStation: function() {
-    return loadingStation;
-  },
-  currentStation: function() {
-    return currentStation;
-  }
-}, Store());
-
-Dispatcher.register(function(action) {
-  switch (action.type) {
-    case "LOADING_LINES":
+  handlers: {
+    "LOADING_LINES": function() {
       loadingLines = true;
       currentLine = null;
       currentStation = null;
-      break;
-    case "GOT_LINES":
+    },
+    "GOT_LINES": function(action) {
       lines = action.lines;
       loadingLines = false;
-      break;
-    case "CHOOSE_LINE":
+    },
+    "CHOOSE_LINE": function(action) {
       currentLine = action.line;
-      StationsApi.load(currentLine, LocationStore.latitude(), LocationStore.longitude());
-      break;
-    case "LOADING_STATIONS":
+      StationsApi.load(currentLine, LocationStore.state.latitude(), LocationStore.state.longitude());
+    },
+    "LOADING_STATIONS": function() {
       loadingStations = true;
-      break;
-    case "GOT_STATIONS":
+    },
+    "GOT_STATIONS": function(action) {
       stations = action.stations;
       loadingStations = false;
-      break;
-    case "CHOOSE_STATION":
-      StationApi.load(action.station, LocationStore.latitude(), LocationStore.longitude());
-      break;
-    case "LOADING_STATION":
+    },
+    "CHOOSE_STATION": function(action) {
+      StationApi.load(action.station, LocationStore.state.latitude(), LocationStore.state.longitude());
+    },
+    "LOADING_STATION": function() {
       loadingStation = true;
-      break;
-    case "GOT_STATION":
+    },
+    "GOT_STATION": function(action) {
       currentStation = action.station;
       loadingStation = false;
-      break;
-    case "BACK_TO_LINES":
+    },
+    "BACK_TO_LINES": function() {
       currentLine = null;
       currentStation = null;
-      break;
-    case "BACK_TO_LINE":
+    },
+    "BACK_TO_LINE": function() {
       currentStation = null;
-      break;
-    default: return;
+    }
   }
-  LineStore.emitChange();
 });
 
 module.exports = LineStore;

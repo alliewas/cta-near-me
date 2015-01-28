@@ -5,32 +5,28 @@ var loading = false;
 var latitude = null;
 var longitude = null;
 
-var LocationStore = $.extend({
-  loading: function() {
-    return loading;
+var LocationStore = new Store({
+  state: {
+    loading: function() {
+      return loading;
+    },
+    latitude: function() {
+      return latitude;
+    },
+    longitude: function() {
+      return longitude;
+    }
   },
-  latitude: function() {
-    return latitude;
-  },
-  longitude: function() {
-    return longitude;
-  }
-}, Store());
-
-Dispatcher.register(function(action) {
-  switch (action.type) {
-    case "LOADING_LOCATION":
+  handlers: {
+    "LOADING_LOCATION": function() {
       loading = true;
-      break;
-    case "GOT_LOCATION":
+    },
+    "GOT_LOCATION": function(action) {
       latitude = action.latitude;
       longitude = action.longitude;
       loading = false;
-      break;
-    default:
-      return;
+    }
   }
-  LocationStore.emitChange();
 });
 
 module.exports = LocationStore;

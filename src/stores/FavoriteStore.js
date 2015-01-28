@@ -26,61 +26,58 @@ function write(blob) {
   localStorage["favoriteStops"] = JSON.stringify(blob);
 }
 
-var FavoriteStore = $.extend({
-  stopIds: function() {
-    var ids = [];
-    for (var lineKey in favoriteStops) {
-      for (var stopId in favoriteStops[lineKey]) {
-        ids.push(stopId);
+var FavoriteStore = new Store({
+  state: {
+    stopIds: function() {
+      var ids = [];
+      for (var lineKey in favoriteStops) {
+        for (var stopId in favoriteStops[lineKey]) {
+          ids.push(stopId);
+        }
       }
-    }
-    return ids;
-  },
-  loading: function() {
-    return loading;
-  },
-  stations: function() {
-    return stations;
-  },
-  isFavorite: function(stop) {
-    if (favoriteStops[stop.LineKey]) {
-      if (favoriteStops[stop.LineKey][stop.StopId]) {
-        return true;
+      return ids;
+    },
+    loading: function() {
+      return loading;
+    },
+    stations: function() {
+      return stations;
+    },
+    isFavorite: function(stop) {
+      if (favoriteStops[stop.LineKey]) {
+        if (favoriteStops[stop.LineKey][stop.StopId]) {
+          return true;
+        }
       }
+      return false;
     }
-    return false;
-  }
-}, Store());
-
-Dispatcher.register(function(action) {
-  switch (action.type) {
-    case "ADD_FAVORITE":
+  },
+  handlers: {
+    "ADD_FAVORITE": function(action) {
       var stop = action.stop;
-      if (!FavoriteStore.isFavorite(stop)) {
+      if (!FavoriteStore.state.isFavorite(stop)) {
         if (!favoriteStops[stop.LineKey]) {
           favoriteStops[stop.LineKey] = {};
         }
         favoriteStops[stop.LineKey][stop.StopId] = true;
       }
       write(favoriteStops);
-      break;
-    case "REMOVE_FAVORITE":
+    },
+    "REMOVE_FAVORITE": function(action) {
       var stop = action.stop;
-      if (FavoriteStore.isFavorite(stop)) {
+      if (FavoriteStore.state.isFavorite(stop)) {
         delete favoriteStops[stop.LineKey][stop.StopId];
       }
       write(favoriteStops);
-      break;
-    case "LOADING_STOPS":
+    },
+    "LOADING_STOPS": function(action) {
       loading = true;
-      break;
-    case "GOT_STOPS":
+    },
+    "GOT_STOPS": function(action) {
       stations = action.stations;
       loading = false;
-      break;
-    default: return;
+    }
   }
-  FavoriteStore.emitChange();
 });
 
 module.exports = FavoriteStore;

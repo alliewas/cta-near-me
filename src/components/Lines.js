@@ -13,13 +13,13 @@ var LineToggleBar = require("./LineToggleBar.js");
 function getState() {
   console.log("Lines.getState");
   return {
-    loadingLines: LineStore.loadingLines(),
-    lines: LineStore.lines(),
-    currentLine: LineStore.currentLine(),
-    loadingStations: LineStore.loadingStations(),
-    stations: LineStore.stations(),
-    loadingStation: LineStore.loadingStation(),
-    currentStation: LineStore.currentStation()
+    loadingLines: LineStore.state.loadingLines(),
+    lines: LineStore.state.lines(),
+    currentLine: LineStore.state.currentLine(),
+    loadingStations: LineStore.state.loadingStations(),
+    stations: LineStore.state.stations(),
+    loadingStation: LineStore.state.loadingStation(),
+    currentStation: LineStore.state.currentStation()
   };
 }
 
@@ -49,7 +49,7 @@ var Lines = React.createClass({
     }
   },
   refreshStation: function() {
-    StationApi.load(this.state.currentStation, LocationStore.latitude(), LocationStore.longitude());
+    StationApi.load(this.state.currentStation, LocationStore.state.latitude(), LocationStore.state.longitude());
   },
   render: function() {
     console.log("Lines.render");

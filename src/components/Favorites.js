@@ -8,11 +8,11 @@ var LineToggleBar = require("./LineToggleBar.js");
 
 function getState() {
   return {
-    loading: FavoriteStore.loading(),
-    stopIds: FavoriteStore.stopIds(),
-    stations: FavoriteStore.stations(),
-    latitude: LocationStore.latitude(),
-    longitude: LocationStore.longitude()
+    loading: FavoriteStore.state.loading(),
+    stopIds: FavoriteStore.state.stopIds(),
+    stations: FavoriteStore.state.stations(),
+    latitude: LocationStore.state.latitude(),
+    longitude: LocationStore.state.longitude()
   };
 }
 

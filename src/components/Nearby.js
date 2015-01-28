@@ -9,11 +9,11 @@ var LineToggleBar = require("./LineToggleBar.js");
 function getState() {
   console.log("Nearby.getState");
   return {
-    loadingLocation: LocationStore.loading(),
-    latitude: LocationStore.latitude(),
-    longitude: LocationStore.longitude(),
-    loadingStations: NearbyStore.loading(),
-    stations: NearbyStore.stations()
+    loadingLocation: LocationStore.state.loading(),
+    latitude: LocationStore.state.latitude(),
+    longitude: LocationStore.state.longitude(),
+    loadingStations: NearbyStore.state.loading(),
+    stations: NearbyStore.state.stations()
   };
 }
 
