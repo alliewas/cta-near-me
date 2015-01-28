@@ -840,7 +840,7 @@ var SimpleStation = React.createClass({displayName: 'SimpleStation',
     var station = this.props.station;
     return (
       React.createElement("div", {className: "simpleStation row split", onClick: this._onClick}, 
-        React.createElement("p", null, station.Name), 
+        React.createElement("span", {className: "name"}, station.Name), 
         React.createElement(Distance, {km: station.Kilometers})
       )
     );
@@ -875,7 +875,7 @@ var Station = React.createClass({displayName: 'Station',
     var station = this.props.station;
     return (
       React.createElement("div", {className: "station"}, 
-        React.createElement("div", {className: "row split"}, 
+        React.createElement("div", {className: "titleRow row split"}, 
           React.createElement("span", {className: "name"}, station.Name), 
           React.createElement(Distance, {km: station.Kilometers})
         ), 
