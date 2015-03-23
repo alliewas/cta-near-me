@@ -1,96 +1,96 @@
 package arrival
 
 import (
-    "fmt"
-    "log"
-    "net/http"
-    "io/ioutil"
-    "encoding/xml"
-    "time"
-    "github.com/alliewas/cta-near-me/config"
+	"encoding/xml"
+	"fmt"
+	"github.com/alliewas/cta-near-me/config"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"time"
 )
 
 var key, timeLayout string
 var cache TimedCache
 
 func init() {
-    key = config.Get().CtaApi.Key
-    timeLayout = "20060102 15:04:05"
-    cache = NewTimedCache()
+	key = config.Get().CtaApi.Key
+	timeLayout = "20060102 15:04:05"
+	cache = NewTimedCache()
 }
 
 func Load(stopId int) ([]Eta, error) {
-    if cached, ok := cache.Get(stopId); ok {
-        log.Printf("cached stop %v", stopId)
-        return cached.([]Eta), nil
-    }
-    log.Printf("fetching stop %v", stopId)
-    url := fmt.Sprintf("http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&stpid=%d", key, stopId)
-    response, err := http.Get(url)
-    if err != nil {
-        log.Printf("failed: %v", err)
-        return nil, err
-    } else {
-        defer response.Body.Close()
-        bytes, err := ioutil.ReadAll(response.Body)
-        var result ctatt
-        err = xml.Unmarshal(bytes, &result)
-        if err != nil {
-            log.Printf("failed: %v", err)
-            return nil, err
-        } else {
-            etas := etas(result.Etas)
-            cache.Set(stopId, etas)
-            return etas, nil
-        }
-    }
+	if cached, ok := cache.Get(stopId); ok {
+		log.Printf("cached stop %v", stopId)
+		return cached.([]Eta), nil
+	}
+	log.Printf("fetching stop %v", stopId)
+	url := fmt.Sprintf("http://lapi.transitchicago.com/api/1.0/ttarrivals.aspx?key=%s&stpid=%d", key, stopId)
+	response, err := http.Get(url)
+	if err != nil {
+		log.Printf("failed: %v", err)
+		return nil, err
+	} else {
+		defer response.Body.Close()
+		bytes, err := ioutil.ReadAll(response.Body)
+		var result ctatt
+		err = xml.Unmarshal(bytes, &result)
+		if err != nil {
+			log.Printf("failed: %v", err)
+			return nil, err
+		} else {
+			etas := etas(result.Etas)
+			cache.Set(stopId, etas)
+			return etas, nil
+		}
+	}
 }
 
 type ctatt struct {
-    Tmst string `xml:"tmst"`
-    Etas []eta `xml:"eta"`
+	Tmst string `xml:"tmst"`
+	Etas []eta  `xml:"eta"`
 }
 
 type eta struct {
-    StationId int `xml:"staId"`
-    StopId int `xml:"stpId"`
-    IsApproaching bool `xml:"isApp"`
-    IsScheduled bool `xml:"isSch"`
-    IsDelayed bool `xml:"isDly"`
-    PredictedAt string `xml:"prdt"`
-    ArrivingAt string `xml:"arrT"`
+	StationId     int    `xml:"staId"`
+	StopId        int    `xml:"stpId"`
+	IsApproaching bool   `xml:"isApp"`
+	IsScheduled   bool   `xml:"isSch"`
+	IsDelayed     bool   `xml:"isDly"`
+	PredictedAt   string `xml:"prdt"`
+	ArrivingAt    string `xml:"arrT"`
 }
 
 type Eta struct {
-    StationId int
-    StopId int
-    IsApproaching bool
-    IsScheduled bool
-    IsDelayed bool
-    PredictedAt time.Time
-    ArrivingAt time.Time
-    ArrivingInMinutes time.Duration
+	StationId         int
+	StopId            int
+	IsApproaching     bool
+	IsScheduled       bool
+	IsDelayed         bool
+	PredictedAt       time.Time
+	ArrivingAt        time.Time
+	ArrivingInMinutes time.Duration
 }
 
 func etas(in []eta) []Eta {
-    chicago, _ := time.LoadLocation("America/Chicago")
-    out := make([]Eta, len(in))
-    for i, v := range in {
-        predictedAt, _ := time.Parse(timeLayout, v.PredictedAt)
-        arrivingAt, _ := time.ParseInLocation(timeLayout, v.ArrivingAt, chicago)
-        arrivingInMinutes := arrivingAt.Sub(time.Now()) / time.Minute
-        out[i] = Eta{
-            v.StationId,
-            v.StopId,
-            v.IsApproaching,
-            v.IsScheduled,
-            v.IsDelayed,
-            predictedAt,
-            arrivingAt,
-            arrivingInMinutes,
-        }
-    }
-    return out
+	chicago, _ := time.LoadLocation("America/Chicago")
+	out := make([]Eta, len(in))
+	for i, v := range in {
+		predictedAt, _ := time.Parse(timeLayout, v.PredictedAt)
+		arrivingAt, _ := time.ParseInLocation(timeLayout, v.ArrivingAt, chicago)
+		arrivingInMinutes := arrivingAt.Sub(time.Now()) / time.Minute
+		out[i] = Eta{
+			v.StationId,
+			v.StopId,
+			v.IsApproaching,
+			v.IsScheduled,
+			v.IsDelayed,
+			predictedAt,
+			arrivingAt,
+			arrivingInMinutes,
+		}
+	}
+	return out
 }
 
 /*
