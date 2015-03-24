@@ -66,9 +66,9 @@ var Lines = React.createClass({
       content = (
         <div>
           <div className="row split">
-            <button onClick={backToLine}><Icon icon="chevron-left" /></button>
+            <button onClick={backToLine} onTouchEnd={backToLine}><Icon icon="chevron-left" /></button>
             <LineToggleBar stations={[this.state.currentStation]} />
-            <button onClick={this.refreshStation}><Icon icon="reload" /></button>
+            <button onClick={this.refreshStation} onTouchEnd={this.refreshStation}><Icon icon="reload" /></button>
           </div>
           <Station station={this.state.currentStation} />
         </div>
@@ -77,7 +77,7 @@ var Lines = React.createClass({
       content = (
         <div>
           <div className="row split">
-            <button onClick={backToLines}><Icon icon="chevron-left" /></button>
+            <button onClick={backToLines} onTouchEnd={backToLines}><Icon icon="chevron-left" /></button>
           </div>
           <SimpleStationList stations={this.state.stations} line={this.state.currentLine} />
         </div>

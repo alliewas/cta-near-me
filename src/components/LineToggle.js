@@ -33,7 +33,7 @@ var LineToggle = React.createClass({
       className += " disabled";
     }
     return (
-      <div className={className} onClick={this.toggle}></div>
+      <div className={className} onClick={this.toggle} onTouchEnd={this.toggle}></div>
     );
   }
 });

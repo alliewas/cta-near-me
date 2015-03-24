@@ -9,7 +9,7 @@ var Line = React.createClass({
     var leftClass = "left double-" + line.Key;
     var rightClass = "right double-" + line.Key;
     return (
-      <div className="line row" onClick={this._onClick}>
+      <div className="line row" onClick={this._onClick} onTouchEnd={this._onClick}>
         <div className={leftClass}></div>
         <div className="name">{line.Name}</div>
         <div className={rightClass}></div>

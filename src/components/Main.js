@@ -63,13 +63,13 @@ var Main = React.createClass({
           {content}
         </div>
         <div className="tabs row">
-          <div className={nearbyClass} onClick={this.gotoNearby}>
+          <div className={nearbyClass} onClick={this.gotoNearby} onTouchEnd={this.gotoNearby}>
             <Icon icon="map-marker" outerClassName="icon" innerClassName={nearbyIconClass} />
           </div>
-          <div className={linesClass} onClick={this.gotoLines}>
+          <div className={linesClass} onClick={this.gotoLines} onTouchEnd={this.gotoLines}>
             <Icon icon="list" outerClassName="icon" innerClassName={linesIconClass} />
           </div>
-          <div className={favoritesClass} onClick={this.gotoFavorites}>
+          <div className={favoritesClass} onClick={this.gotoFavorites} onTouchEnd={this.gotoFavorites}>
             <Icon icon="star" outerClassName="icon" innerClassName={favoritesIconClass} />
           </div>
         </div>

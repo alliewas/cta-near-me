@@ -56,7 +56,7 @@ var Nearby = React.createClass({
           <div className="row split">
             <button className="hidden"><Icon icon="reload" /></button>
             <LineToggleBar stations={this.state.stations} />
-            <button className="refresh" onClick={refresh}><Icon icon="reload" /></button>
+            <button className="refresh" onClick={refresh} onTouchEnd={refresh}><Icon icon="reload" /></button>
           </div>
           <Stations stations={this.state.stations} />
         </div>

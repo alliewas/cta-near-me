@@ -377,7 +377,7 @@ var Favorites = React.createClass({displayName: 'Favorites',
           React.createElement("div", {className: "row split"}, 
             React.createElement("button", {className: "hidden"}, React.createElement(Icon, {icon: "reload"})), 
             React.createElement(LineToggleBar, {stations: this.state.stations, onlyFavorites: true}), 
-            React.createElement("button", {className: "refresh", onClick: this._load}, React.createElement(Icon, {icon: "reload"}))
+            React.createElement("button", {className: "refresh", onClick: this._load, onTouchEnd: this._load}, React.createElement(Icon, {icon: "reload"}))
           ), 
           React.createElement(Stations, {stations: this.state.stations, onlyFavorites: true})
         )
@@ -454,7 +454,7 @@ var Line = React.createClass({displayName: 'Line',
     var leftClass = "left double-" + line.Key;
     var rightClass = "right double-" + line.Key;
     return (
-      React.createElement("div", {className: "line row", onClick: this._onClick}, 
+      React.createElement("div", {className: "line row", onClick: this._onClick, onTouchEnd: this._onClick}, 
         React.createElement("div", {className: leftClass}), 
         React.createElement("div", {className: "name"}, line.Name), 
         React.createElement("div", {className: rightClass})
@@ -518,7 +518,7 @@ var LineToggle = React.createClass({displayName: 'LineToggle',
       className += " disabled";
     }
     return (
-      React.createElement("div", {className: className, onClick: this.toggle})
+      React.createElement("div", {className: className, onClick: this.toggle, onTouchEnd: this.toggle})
     );
   }
 });
@@ -631,9 +631,9 @@ var Lines = React.createClass({displayName: 'Lines',
       content = (
         React.createElement("div", null, 
           React.createElement("div", {className: "row split"}, 
-            React.createElement("button", {onClick: backToLine}, React.createElement(Icon, {icon: "chevron-left"})), 
+            React.createElement("button", {onClick: backToLine, onTouchEnd: backToLine}, React.createElement(Icon, {icon: "chevron-left"})), 
             React.createElement(LineToggleBar, {stations: [this.state.currentStation]}), 
-            React.createElement("button", {onClick: this.refreshStation}, React.createElement(Icon, {icon: "reload"}))
+            React.createElement("button", {onClick: this.refreshStation, onTouchEnd: this.refreshStation}, React.createElement(Icon, {icon: "reload"}))
           ), 
           React.createElement(Station, {station: this.state.currentStation})
         )
@@ -642,7 +642,7 @@ var Lines = React.createClass({displayName: 'Lines',
       content = (
         React.createElement("div", null, 
           React.createElement("div", {className: "row split"}, 
-            React.createElement("button", {onClick: backToLines}, React.createElement(Icon, {icon: "chevron-left"}))
+            React.createElement("button", {onClick: backToLines, onTouchEnd: backToLines}, React.createElement(Icon, {icon: "chevron-left"}))
           ), 
           React.createElement(SimpleStationList, {stations: this.state.stations, line: this.state.currentLine})
         )
@@ -737,13 +737,13 @@ var Main = React.createClass({displayName: 'Main',
           content
         ), 
         React.createElement("div", {className: "tabs row"}, 
-          React.createElement("div", {className: nearbyClass, onClick: this.gotoNearby}, 
+          React.createElement("div", {className: nearbyClass, onClick: this.gotoNearby, onTouchEnd: this.gotoNearby}, 
             React.createElement(Icon, {icon: "map-marker", outerClassName: "icon", innerClassName: nearbyIconClass})
           ), 
-          React.createElement("div", {className: linesClass, onClick: this.gotoLines}, 
+          React.createElement("div", {className: linesClass, onClick: this.gotoLines, onTouchEnd: this.gotoLines}, 
             React.createElement(Icon, {icon: "list", outerClassName: "icon", innerClassName: linesIconClass})
           ), 
-          React.createElement("div", {className: favoritesClass, onClick: this.gotoFavorites}, 
+          React.createElement("div", {className: favoritesClass, onClick: this.gotoFavorites, onTouchEnd: this.gotoFavorites}, 
             React.createElement(Icon, {icon: "star", outerClassName: "icon", innerClassName: favoritesIconClass})
           )
         )
@@ -813,7 +813,7 @@ var Nearby = React.createClass({displayName: 'Nearby',
           React.createElement("div", {className: "row split"}, 
             React.createElement("button", {className: "hidden"}, React.createElement(Icon, {icon: "reload"})), 
             React.createElement(LineToggleBar, {stations: this.state.stations}), 
-            React.createElement("button", {className: "refresh", onClick: refresh}, React.createElement(Icon, {icon: "reload"}))
+            React.createElement("button", {className: "refresh", onClick: refresh, onTouchEnd: refresh}, React.createElement(Icon, {icon: "reload"}))
           ), 
           React.createElement(Stations, {stations: this.state.stations})
         )
@@ -841,7 +841,7 @@ var SimpleStation = React.createClass({displayName: 'SimpleStation',
     var station = this.props.station;
     var className = "simpleStation row split line-bottom-" + this.props.line.Key;
     return (
-      React.createElement("div", {className: className, onClick: this._onClick}, 
+      React.createElement("div", {className: className, onClick: this._onClick, onTouchEnd: this._onClick}, 
         React.createElement("span", {className: "name"}, station.Name), 
         React.createElement(Distance, {km: station.Kilometers})
       )
@@ -954,7 +954,7 @@ var Stop = React.createClass({displayName: 'Stop',
         React.createElement("div", {className: "stop"}, 
           React.createElement("div", {className: lineClass}, 
             React.createElement("span", null, "to ", React.createElement("span", {className: "stopName"}, stop.Name)), 
-            React.createElement("button", {onClick: this.toggleFavorite}, React.createElement(Icon, {icon: "star", innerClassName: favIcon}))
+            React.createElement("button", {onClick: this.toggleFavorite, onTouchEnd: this.toggleFavorite}, React.createElement(Icon, {icon: "star", innerClassName: favIcon}))
           ), 
           stop.Arrivals && React.createElement(Arrivals, {stop: stop, arrivals: stop.Arrivals})
         )
