@@ -733,6 +733,9 @@ var Main = React.createClass({displayName: 'Main',
     }
     return (
       React.createElement("div", {className: "main"}, 
+        React.createElement("div", {className: "content"}, 
+          content
+        ), 
         React.createElement("div", {className: "tabs row"}, 
           React.createElement("div", {className: nearbyClass, onClick: this.gotoNearby}, 
             React.createElement(Icon, {icon: "map-marker", outerClassName: "icon", innerClassName: nearbyIconClass})
@@ -743,8 +746,7 @@ var Main = React.createClass({displayName: 'Main',
           React.createElement("div", {className: favoritesClass, onClick: this.gotoFavorites}, 
             React.createElement(Icon, {icon: "star", outerClassName: "icon", innerClassName: favoritesIconClass})
           )
-        ), 
-        content
+        )
       )
     );
   }

@@ -59,6 +59,9 @@ var Main = React.createClass({
     }
     return (
       <div className="main">
+        <div className="content">
+          {content}
+        </div>
         <div className="tabs row">
           <div className={nearbyClass} onClick={this.gotoNearby}>
             <Icon icon="map-marker" outerClassName="icon" innerClassName={nearbyIconClass} />
@@ -70,7 +73,6 @@ var Main = React.createClass({
             <Icon icon="star" outerClassName="icon" innerClassName={favoritesIconClass} />
           </div>
         </div>
-        {content}
       </div>
     );
   }
