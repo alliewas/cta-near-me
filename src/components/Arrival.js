@@ -23,7 +23,7 @@ var shortTime = function(value) {
     if (minutes < 10) {
       minutes = "0" + minutes;
     }
-    return hours + ":" + minutes + " " + ampm;
+    return <span><span className="number">{hours}:{minutes}</span> {ampm}</span>;
   }
 }
 
@@ -35,7 +35,7 @@ var Arrival = React.createClass({
     if (arrival.IsApproaching) {
       topContent = <span className="approaching">Approaching</span>;
     } else {
-      topContent = <span className="arrivingIn">{arrival.ArrivingInMinutes} {pluralize("min", arrival.ArrivingInMinutes)}</span>;
+      topContent = <span className="arrivingIn"><span className="number">{arrival.ArrivingInMinutes}</span> {pluralize("min", arrival.ArrivingInMinutes)}</span>;
     }
     var bottomContent = <span className="arrivingTime">{shortTime(arrival.ArrivingAt)}</span>;
     if (arrival.IsDelayed) {

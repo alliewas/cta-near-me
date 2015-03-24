@@ -260,7 +260,7 @@ var shortTime = function(value) {
     if (minutes < 10) {
       minutes = "0" + minutes;
     }
-    return hours + ":" + minutes + " " + ampm;
+    return React.createElement("span", null, React.createElement("span", {className: "number"}, hours, ":", minutes), " ", ampm);
   }
 }
 
@@ -272,7 +272,7 @@ var Arrival = React.createClass({displayName: 'Arrival',
     if (arrival.IsApproaching) {
       topContent = React.createElement("span", {className: "approaching"}, "Approaching");
     } else {
-      topContent = React.createElement("span", {className: "arrivingIn"}, arrival.ArrivingInMinutes, " ", pluralize("min", arrival.ArrivingInMinutes));
+      topContent = React.createElement("span", {className: "arrivingIn"}, React.createElement("span", {className: "number"}, arrival.ArrivingInMinutes), " ", pluralize("min", arrival.ArrivingInMinutes));
     }
     var bottomContent = React.createElement("span", {className: "arrivingTime"}, shortTime(arrival.ArrivingAt));
     if (arrival.IsDelayed) {

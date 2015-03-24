@@ -171,20 +171,45 @@ svg {
 }
 
 .arrivals .arrival {
-  width: 30vw;
-  padding: 0.2em;
-  margin: 0.2em;
+  width: 33vw;
   text-align: center;
   -webkit-flex-shrink: 0;
   -moz-flex-shrink: 0;
   -ms-flex-shrink: 0;
   flex-shrink: 0;
+  font-family: Source Sans Pro;
+  color: #33495D;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.arrivals .arrival .approaching {
+  line-height: 36px;
+}
+
+.arrivals .arrival .arrivingIn {
+  line-height: 30px;
+}
+
+.arrivals .arrival .arrivingIn .number {
+  font-size: 28px;
+}
+
+.arrivals .arrival .arrivingTime {
+  line-height: 24px;
+  font-weight: 300;
+}
+
+.arrivals .arrival .arrivingTime .number {
+  font-size: 20px;
 }
 
 .arrivals .arrival hr {
-  margin-top: 0.1em;
-  margin-bottom: 0.1em;
-  width: 80%;
+  border: none;
+  padding: 1px;
+  margin: 0;
+  margin-left: 6px;
+  width: 90%;
 }
 
 .lines .line {

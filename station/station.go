@@ -160,12 +160,12 @@ func init() {
 	stations = map[int]Station{
 		40900: Station{40900, "Howard", -87.672892, 42.019063,
 			[]Stop{
-				Stop{30173, "Red", "N", "Howard (Terminal arrival)"},
-				Stop{30174, "Red", "S", "95th)"},
-				Stop{30175, "P", "N", "Howard (NB) (Linden, Skokie-bound)"},
-				Stop{30176, "P", "S", "Howard (Terminal arrival)"},
-				Stop{30175, "Y", "N", "Howard (NB) (Linden, Skokie-bound)"},
-				Stop{30176, "Y", "S", "Howard (Terminal arrival)"},
+				Stop{30173, "Red", "N", "Terminal arrival"},
+				Stop{30174, "Red", "S", "95th"},
+				Stop{30175, "P", "N", "Linden, Skokie"},
+				Stop{30176, "P", "S", "Terminal arrival"},
+				Stop{30175, "Y", "N", "Linden, Skokie"},
+				Stop{30176, "Y", "S", "Terminal arrival"},
 			},
 		},
 		41190: Station{41190, "Jarvis", -87.669092, 42.015876,
