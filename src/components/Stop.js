@@ -44,7 +44,7 @@ var Stop = React.createClass({
       return (
         <div className="stop">
           <div className={lineClass}>
-            <span>{stop.Name}</span>
+            <span>to <span className="stopName">{stop.Name}</span></span>
             <button onClick={this.toggleFavorite}><Icon icon="star" innerClassName={favIcon} /></button>
           </div>
           {stop.Arrivals && <Arrivals stop={stop} arrivals={stop.Arrivals} />}

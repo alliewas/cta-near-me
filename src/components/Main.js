@@ -5,28 +5,11 @@ var Favorites = require("./Favorites.js");
 var Actions = require("../actions/Actions.js");
 var Icon = require("./Icon.js");
 
-function gotoNearby() {
-  Actions.switchTab("nearby");
-}
-
-function gotoLines() {
-  Actions.switchTab("lines");
-}
-
-function gotoFavorites() {
-  Actions.switchTab("favorites");
-}
-
-function getState() {
-  console.log("Main.getState");
-  return {
-    tab: TabStore.state.current()
-  };
-}
-
 var Main = React.createClass({
   getInitialState: function() {
-    return getState();
+    return {
+      tab: TabStore.state.current()
+    };
   },
   componentDidMount: function() {
     TabStore.addChangeListener(this._onChange);
@@ -35,7 +18,23 @@ var Main = React.createClass({
     TabStore.removeChangeListener(this._onChange);
   },
   _onChange: function() {
-    this.setState(getState());
+    if (this.isMounted()) {
+      this.setState(this.getInitialState());
+    }
+  },
+  gotoNearby: function() {
+    this.switchTab("nearby");
+  },
+  gotoLines: function() {
+    this.switchTab("lines");
+  },
+  gotoFavorites: function() {
+    this.switchTab("favorites");
+  },
+  switchTab: function(tab) {
+    if (this.state.tab != tab) {
+      Actions.switchTab(tab);
+    }
   },
   render: function() {
     var content;
@@ -61,13 +60,13 @@ var Main = React.createClass({
     return (
       <div className="main">
         <div className="tabs row">
-          <div className={nearbyClass} onClick={gotoNearby}>
+          <div className={nearbyClass} onClick={this.gotoNearby}>
             <Icon icon="map-marker" outerClassName="icon" innerClassName={nearbyIconClass} />
           </div>
-          <div className={linesClass} onClick={gotoLines}>
+          <div className={linesClass} onClick={this.gotoLines}>
             <Icon icon="list" outerClassName="icon" innerClassName={linesIconClass} />
           </div>
-          <div className={favoritesClass} onClick={gotoFavorites}>
+          <div className={favoritesClass} onClick={this.gotoFavorites}>
             <Icon icon="star" outerClassName="icon" innerClassName={favoritesIconClass} />
           </div>
         </div>

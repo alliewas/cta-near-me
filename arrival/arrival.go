@@ -69,7 +69,7 @@ type Eta struct {
 	IsDelayed         bool
 	PredictedAt       time.Time
 	ArrivingAt        time.Time
-	ArrivingInMinutes time.Duration
+	ArrivingInMinutes int64
 }
 
 func etas(in []eta) []Eta {
@@ -87,7 +87,7 @@ func etas(in []eta) []Eta {
 			v.IsDelayed,
 			predictedAt,
 			arrivingAt,
-			arrivingInMinutes,
+			int64(arrivingInMinutes),
 		}
 	}
 	return out

@@ -679,28 +679,11 @@ var Favorites = require("./Favorites.js");
 var Actions = require("../actions/Actions.js");
 var Icon = require("./Icon.js");
 
-function gotoNearby() {
-  Actions.switchTab("nearby");
-}
-
-function gotoLines() {
-  Actions.switchTab("lines");
-}
-
-function gotoFavorites() {
-  Actions.switchTab("favorites");
-}
-
-function getState() {
-  console.log("Main.getState");
-  return {
-    tab: TabStore.state.current()
-  };
-}
-
 var Main = React.createClass({displayName: 'Main',
   getInitialState: function() {
-    return getState();
+    return {
+      tab: TabStore.state.current()
+    };
   },
   componentDidMount: function() {
     TabStore.addChangeListener(this._onChange);
@@ -709,7 +692,23 @@ var Main = React.createClass({displayName: 'Main',
     TabStore.removeChangeListener(this._onChange);
   },
   _onChange: function() {
-    this.setState(getState());
+    if (this.isMounted()) {
+      this.setState(this.getInitialState());
+    }
+  },
+  gotoNearby: function() {
+    this.switchTab("nearby");
+  },
+  gotoLines: function() {
+    this.switchTab("lines");
+  },
+  gotoFavorites: function() {
+    this.switchTab("favorites");
+  },
+  switchTab: function(tab) {
+    if (this.state.tab != tab) {
+      Actions.switchTab(tab);
+    }
   },
   render: function() {
     var content;
@@ -735,13 +734,13 @@ var Main = React.createClass({displayName: 'Main',
     return (
       React.createElement("div", {className: "main"}, 
         React.createElement("div", {className: "tabs row"}, 
-          React.createElement("div", {className: nearbyClass, onClick: gotoNearby}, 
+          React.createElement("div", {className: nearbyClass, onClick: this.gotoNearby}, 
             React.createElement(Icon, {icon: "map-marker", outerClassName: "icon", innerClassName: nearbyIconClass})
           ), 
-          React.createElement("div", {className: linesClass, onClick: gotoLines}, 
+          React.createElement("div", {className: linesClass, onClick: this.gotoLines}, 
             React.createElement(Icon, {icon: "list", outerClassName: "icon", innerClassName: linesIconClass})
           ), 
-          React.createElement("div", {className: favoritesClass, onClick: gotoFavorites}, 
+          React.createElement("div", {className: favoritesClass, onClick: this.gotoFavorites}, 
             React.createElement(Icon, {icon: "star", outerClassName: "icon", innerClassName: favoritesIconClass})
           )
         ), 
@@ -951,7 +950,7 @@ var Stop = React.createClass({displayName: 'Stop',
       return (
         React.createElement("div", {className: "stop"}, 
           React.createElement("div", {className: lineClass}, 
-            React.createElement("span", null, stop.Name), 
+            React.createElement("span", null, "to ", React.createElement("span", {className: "stopName"}, stop.Name)), 
             React.createElement("button", {onClick: this.toggleFavorite}, React.createElement(Icon, {icon: "star", innerClassName: favIcon}))
           ), 
           stop.Arrivals && React.createElement(Arrivals, {stop: stop, arrivals: stop.Arrivals})
