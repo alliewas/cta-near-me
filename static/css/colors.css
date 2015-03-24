@@ -63,11 +63,57 @@
 }
 
 .double-Red {
-  background-color: white;
   padding: 0.5px;
   border-top: 3px solid #c60c30;
   border-bottom: 3px solid #c60c30;
-  margin-bottom: 10px;
+}
+
+.double-Blue {
+  padding: 0.5px;
+  border-top: 3px solid #00a1de;
+  border-bottom: 3px solid #00a1de;
+}
+
+.double-Brn {
+  padding: 0.5px;
+  border-top: 3px solid #62361b;
+  border-bottom: 3px solid #62361b;
+}
+
+.double-G {
+  padding: 0.5px;
+  border-top: 3px solid #009b3a;
+  border-bottom: 3px solid #009b3a;
+}
+
+.double-Org {
+  padding: 0.5px;
+  border-top: 3px solid #f9461c;
+  border-bottom: 3px solid #f9461c;
+}
+
+.double-P {
+  padding: 0.5px;
+  border-top: 3px solid #522398;
+  border-bottom: 3px solid #522398;
+}
+
+.double-Pexp {
+  padding: 0.5px;
+  border-top: 3px solid #522398;
+  border-bottom: 3px solid #522398;
+}
+
+.double-Pink {
+  padding: 0.5px;
+  border-top: 3px solid #e27ea6;
+  border-bottom: 3px solid #e27ea6;
+}
+
+.double-Y {
+  padding: 0.5px;
+  border-top: 3px solid #f9e300;
+  border-bottom: 3px solid #f9e300;
 }
 
 hr.line-Red {

@@ -6,10 +6,13 @@ var Line = React.createClass({
   },
   render: function() {
     var line = this.props.line;
-    var lineClass = "line line-bottom-" + line.Key;
+    var leftClass = "left double-" + line.Key;
+    var rightClass = "right double-" + line.Key;
     return (
-      <div className={lineClass} onClick={this._onClick}>
-        {line.Name}
+      <div className="line row" onClick={this._onClick}>
+        <div className={leftClass}></div>
+        <div className="name">{line.Name}</div>
+        <div className={rightClass}></div>
       </div>
     );
   }

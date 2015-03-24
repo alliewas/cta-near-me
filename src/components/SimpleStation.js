@@ -7,8 +7,9 @@ var SimpleStation = React.createClass({
   },
   render: function() {
     var station = this.props.station;
+    var className = "simpleStation row split line-bottom-" + this.props.line.Key;
     return (
-      <div className="simpleStation row split" onClick={this._onClick}>
+      <div className={className} onClick={this._onClick}>
         <span className="name">{station.Name}</span>
         <Distance km={station.Kilometers} />
       </div>

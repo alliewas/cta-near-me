@@ -79,7 +79,7 @@ var Lines = React.createClass({
           <div className="row split">
             <button onClick={backToLines}><Icon icon="chevron-left" /></button>
           </div>
-          <SimpleStationList stations={this.state.stations} />
+          <SimpleStationList stations={this.state.stations} line={this.state.currentLine} />
         </div>
       );
     }

@@ -38,9 +38,6 @@ var Arrival = React.createClass({
       topContent = <span className="arrivingIn"><span className="number">{arrival.ArrivingInMinutes}</span> {pluralize("min", arrival.ArrivingInMinutes)}</span>;
     }
     var bottomContent = <span className="arrivingTime">{shortTime(arrival.ArrivingAt)}</span>;
-    if (arrival.IsDelayed) {
-      bottomContent += <span>*</span>;
-    }
     var hrClass = "line-" + stop.LineKey;
     return (
       <div className="arrival">

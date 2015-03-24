@@ -149,13 +149,13 @@ svg {
 }
 
 .station .titleRow {
-  padding-left: 10px;
+  padding-left: 5px;
   padding-right: 10px;
+  margin-bottom: 4px;
 }
 
 .station .titleRow .name {
   font-size: 18pt;
-  font-weight: bold;
 }
 
 .row.end {
@@ -168,6 +168,8 @@ svg {
 .arrivals {
   width: 100vw;
   overflow-x: auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .arrivals .arrival {
@@ -213,10 +215,31 @@ svg {
 }
 
 .lines .line {
-  padding: 6px 10px 3px;
-  margin-bottom: 10px;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
   font-weight: 300;
-  font-size: 24pt;
+  font-size: 18pt;
+  text-transform: uppercase;
+}
+
+.lines .line .name {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.lines .line .left {
+  width: 50px;
+}
+
+.lines .line .right {
+  -webkit-flex-grow: 1;
+  -moz-flex-grow: 1;
+  -ms-flex-grow: 1;
+  flex-grow: 1;
 }
 
 .stop .line {
@@ -254,7 +277,6 @@ svg {
 
 .simpleStation {
   padding: 10px;
-  border-bottom: 2px solid #BBBBBB;
 }
 
 .simpleStation .name {

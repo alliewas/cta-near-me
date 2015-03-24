@@ -275,9 +275,6 @@ var Arrival = React.createClass({displayName: 'Arrival',
       topContent = React.createElement("span", {className: "arrivingIn"}, React.createElement("span", {className: "number"}, arrival.ArrivingInMinutes), " ", pluralize("min", arrival.ArrivingInMinutes));
     }
     var bottomContent = React.createElement("span", {className: "arrivingTime"}, shortTime(arrival.ArrivingAt));
-    if (arrival.IsDelayed) {
-      bottomContent += React.createElement("span", null, "*");
-    }
     var hrClass = "line-" + stop.LineKey;
     return (
       React.createElement("div", {className: "arrival"}, 
@@ -454,10 +451,13 @@ var Line = React.createClass({displayName: 'Line',
   },
   render: function() {
     var line = this.props.line;
-    var lineClass = "line line-bottom-" + line.Key;
+    var leftClass = "left double-" + line.Key;
+    var rightClass = "right double-" + line.Key;
     return (
-      React.createElement("div", {className: lineClass, onClick: this._onClick}, 
-        line.Name
+      React.createElement("div", {className: "line row", onClick: this._onClick}, 
+        React.createElement("div", {className: leftClass}), 
+        React.createElement("div", {className: "name"}, line.Name), 
+        React.createElement("div", {className: rightClass})
       )
     );
   }
@@ -644,7 +644,7 @@ var Lines = React.createClass({displayName: 'Lines',
           React.createElement("div", {className: "row split"}, 
             React.createElement("button", {onClick: backToLines}, React.createElement(Icon, {icon: "chevron-left"}))
           ), 
-          React.createElement(SimpleStationList, {stations: this.state.stations})
+          React.createElement(SimpleStationList, {stations: this.state.stations, line: this.state.currentLine})
         )
       );
     }
@@ -839,8 +839,9 @@ var SimpleStation = React.createClass({displayName: 'SimpleStation',
   },
   render: function() {
     var station = this.props.station;
+    var className = "simpleStation row split line-bottom-" + this.props.line.Key;
     return (
-      React.createElement("div", {className: "simpleStation row split", onClick: this._onClick}, 
+      React.createElement("div", {className: className, onClick: this._onClick}, 
         React.createElement("span", {className: "name"}, station.Name), 
         React.createElement(Distance, {km: station.Kilometers})
       )
@@ -858,8 +859,8 @@ var SimpleStationList = React.createClass({displayName: 'SimpleStationList',
     return (
       React.createElement("div", {className: "simpleStationList"}, 
         this.props.stations.map(function(station, index) {
-          return React.createElement(SimpleStation, {key: index, station: station});
-        })
+          return React.createElement(SimpleStation, {key: index, station: station, line: this.props.line});
+        }.bind(this))
       )
     );
   }
