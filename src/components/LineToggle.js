@@ -28,12 +28,12 @@ var LineToggle = React.createClass({
   },
   render: function() {
     var line = this.props.line;
-    var className = "lineToggle line-" + line;
+    var className = "clickable lineToggle line-" + line;
     if (!this.state.isEnabled) {
       className += " disabled";
     }
     return (
-      <div className={className} onClick={this.toggle} onTouchEnd={this.toggle}></div>
+      <div className={className} onClick={this.toggle}></div>
     );
   }
 });

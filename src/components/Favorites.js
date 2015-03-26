@@ -52,7 +52,7 @@ var Favorites = React.createClass({
           <div className="row split">
             <button className="hidden"><Icon icon="reload" /></button>
             <LineToggleBar stations={this.state.stations} onlyFavorites={true} />
-            <button className="refresh" onClick={this._load} onTouchEnd={this._load}><Icon icon="reload" /></button>
+            <button className="refresh clickable" onClick={this._load}><Icon icon="reload" /></button>
           </div>
           <Stations stations={this.state.stations} onlyFavorites={true} />
         </div>

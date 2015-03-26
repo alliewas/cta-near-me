@@ -38,7 +38,7 @@ var Main = React.createClass({
   },
   render: function() {
     var content;
-    var nearbyClass = linesClass = favoritesClass = "tab";
+    var nearbyClass = linesClass = favoritesClass = "clickable tab";
     var nearbyIconClass = linesIconClass = favoritesIconClass = "";
     switch (this.state.tab) {
       case "nearby":
@@ -63,13 +63,13 @@ var Main = React.createClass({
           {content}
         </div>
         <div className="tabs row">
-          <div className={nearbyClass} onClick={this.gotoNearby} onTouchEnd={this.gotoNearby}>
+          <div className={nearbyClass} onClick={this.gotoNearby}>
             <Icon icon="map-marker" outerClassName="icon" innerClassName={nearbyIconClass} />
           </div>
-          <div className={linesClass} onClick={this.gotoLines} onTouchEnd={this.gotoLines}>
+          <div className={linesClass} onClick={this.gotoLines}>
             <Icon icon="list" outerClassName="icon" innerClassName={linesIconClass} />
           </div>
-          <div className={favoritesClass} onClick={this.gotoFavorites} onTouchEnd={this.gotoFavorites}>
+          <div className={favoritesClass} onClick={this.gotoFavorites}>
             <Icon icon="star" outerClassName="icon" innerClassName={favoritesIconClass} />
           </div>
         </div>
