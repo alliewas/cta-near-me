@@ -90,6 +90,15 @@ type StopWrapper struct {
 	Arrivals []arrival.Eta
 }
 
+func (s *StopWrapper) SetArrivals(arrivals []arrival.Eta) {
+	s.Arrivals = make([]arrival.Eta, 0)
+	for _, eta := range arrivals {
+		if eta.Route == s.LineKey {
+			s.Arrivals = append(s.Arrivals, eta)
+		}
+	}
+}
+
 var Lines []Line
 var stations map[int]Station
 var lineStations map[string][]Station
