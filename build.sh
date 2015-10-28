@@ -1,1 +1,3 @@
-browserify build/app.js -o static/build.js
+./compile-jsx.sh
+./compile-js.sh
+

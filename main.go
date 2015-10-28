@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"github.com/alliewas/cta-near-me/api"
-	"github.com/alliewas/cta-near-me/config"
 	"github.com/gorilla/mux"
 	"html/template"
 	"log"
@@ -11,7 +9,7 @@ import (
 )
 
 func main() {
-	log.Printf("starting up")
+	log.Printf("starting cta-near-me")
 
 	router := mux.NewRouter()
 	router.HandleFunc("/", index).Methods("GET")
@@ -22,15 +20,13 @@ func main() {
 	router.HandleFunc("/api/station", api.Station).Methods("GET")
 	router.HandleFunc("/api/stops", api.Stops).Methods("GET")
 
-	router.PathPrefix("/").Handler(http.FileServer(http.Dir(fmt.Sprintf("%s/static/", config.Get().Host.Path))))
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("/src/github.com/alliewas/cta-near-me/static/")))
 	http.Handle("/", router)
 
-	port := config.Get().Host.Port
-	log.Printf("Serving on port %v", port)
-	log.Fatal(http.ListenAndServe(port, nil))
+	log.Fatal(http.ListenAndServe(":80", nil))
 }
 
-var indexTemplate = template.Must(template.ParseFiles(fmt.Sprintf("%s/template/index.html", config.Get().Host.Path)))
+var indexTemplate = template.Must(template.ParseFiles("/src/github.com/alliewas/cta-near-me/template/index.html"))
 
 func index(w http.ResponseWriter, r *http.Request) {
 	indexTemplate.Execute(w, nil)

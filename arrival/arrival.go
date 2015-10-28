@@ -3,10 +3,10 @@ package arrival
 import (
 	"encoding/xml"
 	"fmt"
-	"github.com/alliewas/cta-near-me/config"
 	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -14,7 +14,7 @@ var key, timeLayout string
 var cache TimedCache
 
 func init() {
-	key = config.Get().CtaApi.Key
+	key = os.Getenv("CTA_API_KEY")
 	timeLayout = "20060102 15:04:05"
 	cache = NewTimedCache()
 }
