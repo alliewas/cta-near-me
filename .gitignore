@@ -1,3 +1,5 @@
 cta-near-me
-cta-near-me.linux
 build/*
+static/build.js
+dev-deploy.sh
+prod-deploy.sh
