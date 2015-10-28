@@ -96,7 +96,7 @@ func Stops(w http.ResponseWriter, r *http.Request) {
 		s := station.GetStation(stationId, lat, long)
 		for _, stop := range s.StopArrivals {
 			if stopIdMap[stop.StopId] {
-				stop.Arrivals = stopEtas.Get(stop.StopId)
+				stop.SetArrivals(stopEtas.Get(stop.StopId))
 			}
 		}
 		stations = append(stations, s)
@@ -151,7 +151,8 @@ func loadStationArrivals(s station.StationWrapper, wg *sync.WaitGroup) {
 	wg.Add(len(s.StopArrivals))
 	for _, stop := range s.StopArrivals {
 		go func(stop *station.StopWrapper, wg *sync.WaitGroup) {
-			stop.Arrivals, _ = arrival.Load(stop.StopId)
+			arrivals, _ := arrival.Load(stop.StopId)
+			stop.SetArrivals(arrivals)
 			wg.Done()
 		}(stop, wg)
 	}

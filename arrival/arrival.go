@@ -52,6 +52,7 @@ type ctatt struct {
 }
 
 type eta struct {
+	Route         string `xml:"rt"`
 	StationId     int    `xml:"staId"`
 	StopId        int    `xml:"stpId"`
 	IsApproaching bool   `xml:"isApp"`
@@ -62,6 +63,7 @@ type eta struct {
 }
 
 type Eta struct {
+	Route             string
 	StationId         int
 	StopId            int
 	IsApproaching     bool
@@ -69,7 +71,7 @@ type Eta struct {
 	IsDelayed         bool
 	PredictedAt       time.Time
 	ArrivingAt        time.Time
-	ArrivingInMinutes time.Duration
+	ArrivingInMinutes int64
 }
 
 func etas(in []eta) []Eta {
@@ -80,6 +82,7 @@ func etas(in []eta) []Eta {
 		arrivingAt, _ := time.ParseInLocation(timeLayout, v.ArrivingAt, chicago)
 		arrivingInMinutes := arrivingAt.Sub(time.Now()) / time.Minute
 		out[i] = Eta{
+			v.Route,
 			v.StationId,
 			v.StopId,
 			v.IsApproaching,
@@ -87,7 +90,7 @@ func etas(in []eta) []Eta {
 			v.IsDelayed,
 			predictedAt,
 			arrivingAt,
-			arrivingInMinutes,
+			int64(arrivingInMinutes),
 		}
 	}
 	return out

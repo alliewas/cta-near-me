@@ -1,0 +1,290 @@
+html,body {
+  height: 100%;
+  margin: 0;
+  background-color: white;
+  font-family: 'Open Sans', sans-serif;
+}
+
+button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+/* This is needed for Safari to click buttons with SVG icons. */
+svg {
+  pointer-events: none;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+.center {
+  height: 100vh;
+
+  display: -ms-flexbox;
+  -mx-box-orient: vertical;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+
+  -webkit-flex-direction: column;
+  -moz-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
+
+  -webkit-flex-wrap: nowrap;
+  -moz-flex-wrap: nowrap;
+  -ms-flex-direction: nowrap;
+  flex-wrap: nowrap;
+
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+}
+
+.row {
+  display: -ms-flexbox;
+  -mx-box-orient: horizontal;
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+
+  -webkit-flex-direction: row;
+  -moz-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+
+  -webkit-flex-wrap: nowrap;
+  -moz-flex-wrap: nowrap;
+  -ms-flex-direction: nowrap;
+  flex-wrap: nowrap;
+}
+
+.row.split {
+  -webkit-justify-content: space-between;
+  -moz-justify-content: space-between;
+  -ms-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+}
+
+.content {
+  margin-bottom: 80px;
+}
+
+.tabs {
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+
+  position: fixed;
+  z-index: 100;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  background-color: white;
+}
+
+.tabs .tab {
+  width: 30vw;
+  height: 60px;
+  margin-left: 5px;
+  margin-right: 5px;
+  background: rgba(0, 167, 247, 0.8);
+
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flex;
+  display: flex;
+  -webkit-justify-content: center;
+  -moz-justify-content: center;
+  -ms-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+  border-top: 6px solid rgba(255, 255, 255, 1);
+}
+
+.tabs .tab.selected {
+  background: rgba(0, 167, 247, 1);
+  border-top: 6px solid rgba(255, 255, 133, 1);
+}
+
+.tabs .tab .icon {
+  width: 32px;
+  height: 32px;
+}
+
+.tabs .tab .icon .inner {
+  fill: #33495D;
+}
+
+.tabs .tab .icon .selected {
+  fill: white;
+}
+
+.station {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.station .titleRow {
+  padding-left: 5px;
+  padding-right: 10px;
+  margin-bottom: 4px;
+}
+
+.station .titleRow .name {
+  font-size: 18pt;
+}
+
+.row.end {
+  -webkit-justify-content: flex-end;
+  -moz-justify-content: flex-end;
+  -ms-justify-content: flex-end;
+  justify-content: flex-end;
+}
+
+.arrivals {
+  width: 100vw;
+  overflow-x: auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.arrivals .arrival {
+  width: 33vw;
+  text-align: center;
+  -webkit-flex-shrink: 0;
+  -moz-flex-shrink: 0;
+  -ms-flex-shrink: 0;
+  flex-shrink: 0;
+  font-family: Source Sans Pro;
+  color: #33495D;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.arrivals .arrival .approaching {
+  line-height: 36px;
+}
+
+.arrivals .arrival .arrivingIn {
+  line-height: 30px;
+}
+
+.arrivals .arrival .arrivingIn .number {
+  font-size: 28px;
+}
+
+.arrivals .arrival .arrivingTime {
+  line-height: 24px;
+  font-weight: 300;
+}
+
+.arrivals .arrival .arrivingTime .number {
+  font-size: 20px;
+}
+
+.arrivals .arrival hr {
+  border: none;
+  padding: 1px;
+  margin: 0;
+  margin-left: 6px;
+  width: 90%;
+}
+
+.lines .line {
+  -webkit-align-items: center;
+  -moz-align-items: center;
+  -ms-align-items: center;
+  align-items: center;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  font-weight: 300;
+  font-size: 18pt;
+  text-transform: uppercase;
+}
+
+.lines .line .name {
+  margin-left: 5px;
+  margin-right: 5px;
+}
+
+.lines .line .left {
+  width: 50px;
+}
+
+.lines .line .right {
+  -webkit-flex-grow: 1;
+  -moz-flex-grow: 1;
+  -ms-flex-grow: 1;
+  flex-grow: 1;
+}
+
+.stop .line {
+  padding-left: 8px;
+  padding-right: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  color: white;
+  font-size: 14px;
+}
+
+.stop .line.line-Y {
+  color: black;
+}
+
+.notFavorite {
+  fill: #CCCCCC;
+}
+
+.isFavorite {
+  fill: yellow;
+}
+
+.lineToggle {
+  border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  margin: 2px;
+}
+
+.simpleStation {
+  padding: 10px;
+}
+
+.simpleStation .name {
+  font-size: 18pt;
+  font-weight: bold;
+}
