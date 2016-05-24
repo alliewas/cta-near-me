@@ -1,12 +1,16 @@
 var Actions = require("../actions/Actions.js");
+import * as request from "superagent";
 
 var LinesApi = {
   load: function() {
     console.log("LinesApi.load");
     Actions.loadingLines();
-    $.getJSON("/api/lines", function(data) {
-      Actions.gotLines(data);
-    });
+    request.get("/api/lines")
+        .end((err, response) => {
+            if (response.ok) {
+                Actions.gotLines(response.body);
+            }
+        });
   }
 };
 

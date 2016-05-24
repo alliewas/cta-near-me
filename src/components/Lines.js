@@ -1,3 +1,4 @@
+import React from "react";
 var LinesApi = require("../api/LinesApi.js");
 var LineStore = require("../stores/LineStore.js");
 var LocationStore = require("../stores/LocationStore.js");

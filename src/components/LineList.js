@@ -1,3 +1,4 @@
+import React from "react";
 var Line = require("./Line.js");
 
 var LineList = React.createClass({

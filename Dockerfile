@@ -9,9 +9,9 @@ RUN apt-get install --yes \
     curl \
     git
 
-RUN curl -O https://storage.googleapis.com/golang/go1.5.1.linux-amd64.tar.gz
+RUN curl -O https://storage.googleapis.com/golang/go1.6.2.linux-amd64.tar.gz
 
-RUN tar -C /usr/local -xzf go1.5.1.linux-amd64.tar.gz
+RUN tar -C /usr/local -xzf go1.6.2.linux-amd64.tar.gz
 
 ENV PATH $PATH:/usr/local/go/bin
 
@@ -20,9 +20,6 @@ ENV GOPATH /
 ADD . /src/github.com/alliewas/cta-near-me
 WORKDIR /src/github.com/alliewas/cta-near-me
 
-RUN go version
-
-RUN go get ./...
 RUN go build
 
 ENTRYPOINT ["./cta-near-me"]

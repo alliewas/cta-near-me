@@ -1,3 +1,4 @@
+import React from "react";
 var Actions = require("../actions/Actions.js");
 
 var Line = React.createClass({

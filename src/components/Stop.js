@@ -1,3 +1,4 @@
+import React from "react";
 var Arrivals = require("./Arrivals.js");
 var FavoriteStore = require("../stores/FavoriteStore.js");
 var LineToggleStore = require("../stores/LineToggleStore.js");

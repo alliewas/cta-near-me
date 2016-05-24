@@ -1,3 +1,4 @@
+import React from "react";
 var LocationUtil = require("../util/LocationUtil.js");
 var LocationStore = require("../stores/LocationStore.js");
 var NearbyStore = require("../stores/NearbyStore.js");

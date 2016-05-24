@@ -1,3 +1,4 @@
+import React from "react";
 var TabStore = require("../stores/TabStore.js");
 var Nearby = require("./Nearby.js");
 var Lines = require("./Lines.js");
@@ -38,8 +39,12 @@ var Main = React.createClass({
   },
   render: function() {
     var content;
-    var nearbyClass = linesClass = favoritesClass = "clickable tab";
-    var nearbyIconClass = linesIconClass = favoritesIconClass = "";
+    let nearbyClass = "clickable tab";
+    let linesClass = "clickable tab";
+    let favoritesClass = "clickable tab";
+    let nearbyIconClass = "";
+    let linesIconClass = "";
+    let favoritesIconClass = "";
     switch (this.state.tab) {
       case "nearby":
         nearbyClass += " selected";

@@ -1,3 +1,4 @@
+import React from "react";
 var FavoriteStore = require("../stores/FavoriteStore.js");
 var LocationStore = require("../stores/LocationStore.js");
 var StopsApi = require("../api/StopsApi.js");

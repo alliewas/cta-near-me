@@ -1,3 +1,4 @@
+import React from "react";
 var Stop = require("./Stop.js");
 
 var Stops = React.createClass({

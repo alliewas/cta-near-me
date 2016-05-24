@@ -1,3 +1,4 @@
+import React from "react";
 var Arrival = require("./Arrival.js");
 
 var Arrivals = React.createClass({

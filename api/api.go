@@ -22,11 +22,13 @@ func Nearby(w http.ResponseWriter, r *http.Request) {
 	log.Printf("stations: %v", nearbyStations)
 
 	response, _ := json.Marshal(nearbyStations)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(response)
 }
 
 func Lines(w http.ResponseWriter, r *http.Request) {
 	response, _ := json.Marshal(station.Lines)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(response)
 }
 
@@ -38,6 +40,7 @@ func Stations(w http.ResponseWriter, r *http.Request) {
 	stations := station.StationsForLine(lineKey, lat, long)
 
 	response, _ := json.Marshal(stations)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(response)
 }
 
@@ -53,6 +56,7 @@ func Station(w http.ResponseWriter, r *http.Request) {
 	wg.Wait()
 
 	response, _ := json.Marshal(station)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(response)
 }
 
@@ -106,6 +110,7 @@ func Stops(w http.ResponseWriter, r *http.Request) {
 	sort.Sort(sorter)
 
 	response, _ := json.Marshal(stations)
+	w.Header().Set("Content-Type", "application/json")
 	w.Write(response)
 }
 

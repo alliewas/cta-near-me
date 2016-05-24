@@ -1,3 +1,4 @@
+import React from "react";
 var Stops = require("./Stops.js");
 var Distance = require("./Distance.js");
 

@@ -1,3 +1,4 @@
+import React from "react";
 var SimpleStation = require("./SimpleStation.js");
 
 var SimpleStationList = React.createClass({

@@ -1,3 +1,4 @@
+import React from "react";
 var Station = require("./Station.js");
 
 var Stations = React.createClass({

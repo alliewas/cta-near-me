@@ -1,3 +1,4 @@
+import React from "react";
 var LineToggleStore = require("../stores/LineToggleStore.js");
 var Actions = require("../actions/Actions.js");
 

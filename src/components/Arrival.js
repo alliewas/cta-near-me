@@ -1,3 +1,5 @@
+import React from "react";
+
 var pluralize = function(base, value) {
   if (value != 1) {
     return base + "s";
