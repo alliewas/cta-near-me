@@ -22,19 +22,19 @@ The server is written in Go. It serves the Javascript and provides a JSON API th
 
 # Development
 
+You'll need to get a CTA API key in order to make requests against the CTA's
+API. Put this in an environment variable called `CTA_API_KEY`, and it will
+be passed along into your container.
+
 Compile and run the server:
 
-```
-./build.sh
-docker build -t cta-near-me .
-docker stop cta-near-me
-docker rm cta-near-me
-docker run \
-    -p 3456:80 \
-    --name cta-near-me \
-    -d \
-    -e CTA_API_KEY="<your key here>" \
-    cta-near-me
-docker logs -f --tail=20 cta-near-me
+```bash
+./dev-deploy.sh
 ```
 
+Once the server is running, if you've made a CSS or JS change you can see the
+results quickly without requiring a full re-deploy:
+
+```bash
+./build.sh
+```
