@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/alliewas/cta-near-me/arrival"
 	"github.com/alliewas/cta-near-me/station"
+	"github.com/julienschmidt/httprouter"
 	"log"
 	"net/http"
 	"sort"
@@ -12,7 +13,17 @@ import (
 	"sync"
 )
 
-func Nearby(w http.ResponseWriter, r *http.Request) {
+func Router() http.Handler {
+	router := httprouter.New()
+	router.GET("/nearby", Nearby)
+	router.GET("/lines", Lines)
+	router.GET("/stations", Stations)
+	router.GET("/station", Station)
+	router.GET("/stops", Stops)
+	return router
+}
+
+func Nearby(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	lat, _ := strconv.ParseFloat(r.URL.Query().Get("latitude"), 64)
 	long, _ := strconv.ParseFloat(r.URL.Query().Get("longitude"), 64)
 	log.Printf("nearby lat %v long %v", lat, long)
@@ -21,30 +32,24 @@ func Nearby(w http.ResponseWriter, r *http.Request) {
 	loadArrivals(nearbyStations)
 	log.Printf("stations: %v", nearbyStations)
 
-	response, _ := json.Marshal(nearbyStations)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	respond(w, nearbyStations)
 }
 
-func Lines(w http.ResponseWriter, r *http.Request) {
-	response, _ := json.Marshal(station.Lines)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+func Lines(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	respond(w, station.Lines)
 }
 
-func Stations(w http.ResponseWriter, r *http.Request) {
+func Stations(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	lineKey := r.URL.Query().Get("line")
 	lat, _ := strconv.ParseFloat(r.URL.Query().Get("latitude"), 64)
 	long, _ := strconv.ParseFloat(r.URL.Query().Get("longitude"), 64)
 
 	stations := station.StationsForLine(lineKey, lat, long)
 
-	response, _ := json.Marshal(stations)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	respond(w, stations)
 }
 
-func Station(w http.ResponseWriter, r *http.Request) {
+func Station(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	log.Printf("loading station")
 	stationId, _ := strconv.ParseInt(r.URL.Query().Get("stationId"), 10, 64)
 	lat, _ := strconv.ParseFloat(r.URL.Query().Get("latitude"), 64)
@@ -55,12 +60,10 @@ func Station(w http.ResponseWriter, r *http.Request) {
 	loadStationArrivals(station, &wg)
 	wg.Wait()
 
-	response, _ := json.Marshal(station)
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(response)
+	respond(w, station)
 }
 
-func Stops(w http.ResponseWriter, r *http.Request) {
+func Stops(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 	log.Printf("loading stops")
 	stopIdStrings := strings.Split(r.URL.Query().Get("stopIds"), ",")
 	lat, _ := strconv.ParseFloat(r.URL.Query().Get("latitude"), 64)
@@ -109,8 +112,20 @@ func Stops(w http.ResponseWriter, r *http.Request) {
 	sorter := station.NewStationSorter(stations)
 	sort.Sort(sorter)
 
-	response, _ := json.Marshal(stations)
+	respond(w, stations)
+}
+
+func originHeader(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+}
+
+func respond(w http.ResponseWriter, value interface{}) {
+	originHeader(w)
 	w.Header().Set("Content-Type", "application/json")
+	response, err := json.Marshal(value)
+	if err != nil {
+		log.Println("json error", err)
+	}
 	w.Write(response)
 }
 
