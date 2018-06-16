@@ -3,3 +3,4 @@ build/*
 static/build.js
 prod-deploy.sh
 node_modules
+dist
